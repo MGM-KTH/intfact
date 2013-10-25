@@ -3,4 +3,4 @@ all: main.o
 	rm *.o
 
 main.o: main.c
-	gcc -c main.c
+	gcc -Wall -c main.c
