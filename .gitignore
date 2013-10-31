@@ -19,3 +19,6 @@ main
 *.exe
 *.out
 *.app
+
+# OS files
+.DS_Store
