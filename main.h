@@ -1,4 +1,9 @@
+#ifndef MAIN_H
+
 #include <stdio.h>
 #include <gmp.h>
 
-int readInput(mpz_t (*array)[]);
+void factorize(mpz_t N);
+
+
+#endif // end header guard

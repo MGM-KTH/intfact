@@ -1,27 +1,28 @@
 #include "main.h"
 
+#define MAX_LINE_LENGTH 256
+#define FAIL_STRING "fail"
+
 int main() {
-    mpz_t input[100];
-    //printf("array size %lu\n", sizeof(*input)/sizeof((*input)[0]));
-
-    int input_count = readInput(&input);
-
-    int i;
-    for(i = 0; i < input_count; i++) {
-        gmp_printf("read %Zd\n", input[i]);
+    static char buffer[MAX_LINE_LENGTH];
+    const char *line;
+    while(( line = fgets(buffer, sizeof(buffer), stdin)) != NULL) {
+        mpz_t current_N;
+        mpz_init(current_N);
+        mpz_set_str(current_N, line, 10);
+        factorize(current_N);
     }
     return 0;
 }
 
-int readInput(mpz_t (*array)[100]) {
-    mpz_init((*array)[0]);
-    int count = 0;
-    //printf("count is %d\n", count);
-    while(count < 100 && gmp_scanf("%Zd", &((*array)[count])) != EOF) {
-        count++;
-        mpz_init((*array)[count]);
-        //printf("count is %d\n", count);
-        //printf("array size %lu\n", sizeof(*array)/sizeof((*array)[0]));
-    }
-    return count;
+/*
+ * Factorizes N using Pollard's rho method
+ */
+void factorize(mpz_t N) {
+    // gmp_printf("Factorizing %Zd\n", N);
+    
+    
+    
+    // printf("%s\n", FAIL_STRING); // Print this if you can't factorize
+    printf("\n");
 }
