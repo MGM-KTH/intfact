@@ -6,13 +6,17 @@
 #define FAIL_STRING "fail"
 
 int main(int argc, char *argv[]) {
+    int i;
     static char buffer[MAX_LINE_LENGTH];
     const char *line;
+    mpz_t factors[FACTORS_ARRAY_SIZE];
+    for (i = 0; i < FACTORS_ARRAY_SIZE; ++i) {
+        mpz_init(factors[i]);
+    }
     while(( line = fgets(buffer, sizeof(buffer), stdin)) != NULL) {
         mpz_t current_N;
         mpz_init(current_N);
         mpz_set_str(current_N, line, 10);
-        unsigned long int factors[FACTORS_ARRAY_SIZE];
         factorize(current_N, factors);
     }
     return 0;
@@ -21,11 +25,14 @@ int main(int argc, char *argv[]) {
 /*
  * Factorizes N using Pollard's rho method
  */
-void factorize(mpz_t N, unsigned long int factors[FACTORS_ARRAY_SIZE]) {
+void factorize(mpz_t N, mpz_t factors[FACTORS_ARRAY_SIZE]) {
     // gmp_printf("Factorizing %Zd\n", N);
+    int num_factors;
 
-    int num_factors = find_trivial_primes(N, factors);
-    // printf("Number of factors found: %d\n", num_factors);
+    num_factors = find_trivial_factors(N, factors);
+
+    num_factors = pollards(N, factors, num_factors);
+
     // gmp_printf("New N after trivial pruning: %Zd\n", N);
 
     if (mpz_cmp_si(N, 1)) {
@@ -37,7 +44,7 @@ void factorize(mpz_t N, unsigned long int factors[FACTORS_ARRAY_SIZE]) {
     printf("\n");
 }
 
-int find_trivial_primes(mpz_t N, unsigned long int factors[FACTORS_ARRAY_SIZE]) {
+int find_trivial_factors(mpz_t N, mpz_t factors[FACTORS_ARRAY_SIZE]) {
     int i;
     int factor_index = 0;
     unsigned long int remainder;
@@ -45,7 +52,10 @@ int find_trivial_primes(mpz_t N, unsigned long int factors[FACTORS_ARRAY_SIZE]) 
         remainder = mpz_fdiv_ui(N, first_primes[i]);
         if (remainder == 0) {
             while (remainder == 0) {
-                factors[factor_index] = first_primes[i];
+                mpz_t factor;
+                mpz_init(factor);
+                mpz_set_ui(factor, first_primes[i]);
+                mpz_set(factors[factor_index], factor);
                 ++factor_index;
                 mpz_fdiv_q_ui(N, N, first_primes[i]);
                 remainder = mpz_fdiv_ui(N, first_primes[i]);
@@ -56,13 +66,27 @@ int find_trivial_primes(mpz_t N, unsigned long int factors[FACTORS_ARRAY_SIZE]) 
 }
 
 
+int pollards(mpz_t N, mpz_t factors[FACTORS_ARRAY_SIZE], int num_factors) {
+    
+    // TDOO: decide how to loop.
+    // Fix get_random function
+    //fix calculate_sequence function
+    // Do GCD in gmp.
+    // put into algorithm!
+    return num_factors;
+}
 
-void print_factors(unsigned long int factors[FACTORS_ARRAY_SIZE], int num_factors) {
+
+
+
+
+
+void print_factors(mpz_t factors[FACTORS_ARRAY_SIZE], int num_factors) {
     int i;
     for (i = 0; i < num_factors; ++i) {
         if (factors[i] == 0) {
             break;
         }
-        printf("%lu\n", factors[i]); 
+        gmp_printf("%Zd\n", factors[i]);
     }
 }
