@@ -31,7 +31,9 @@ void factorize(mpz_t N, mpz_t factors[FACTORS_ARRAY_SIZE]) {
 
     num_factors = find_trivial_factors(N, factors);
 
-    num_factors = pollards(N, factors, num_factors);
+    if(mpz_cmp_si(N, 1) != 0) {
+        num_factors = pollards(N, factors, num_factors);
+    }
 
     // gmp_printf("New N after trivial pruning: %Zd\n", N);
 
@@ -68,8 +70,21 @@ int find_trivial_factors(mpz_t N, mpz_t factors[FACTORS_ARRAY_SIZE]) {
 
 int pollards(mpz_t N, mpz_t factors[FACTORS_ARRAY_SIZE], int num_factors) {
     
+    // Fix random number container
+    mpz_t rand;
+    mpz_init(rand);
+
+    // Initialize and seed a randstate
+    gmp_randstate_t rand_state;
+    gmp_randinit_default(rand_state);
+    gmp_randseed_ui(rand_state, time(NULL));
+
+    // Get random number
+    mpz_urandomm(rand, rand_state, N);
+
+    //gmp_printf("number N: %Zd random number %Zd\n", N, rand);
+
     // TDOO: decide how to loop.
-    // Fix get_random function
     //fix calculate_sequence function
     // Do GCD in gmp.
     // put into algorithm!

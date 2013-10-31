@@ -5,6 +5,7 @@
 
 #include <stdio.h>
 #include <gmp.h>
+#include <time.h>
 #include "constants.h"
 
 int main(int argc, char *argv[]);
