@@ -22,3 +22,6 @@ main
 
 # OS files
 .DS_Store
+
+# Sublime Text files
+*.sublime*
