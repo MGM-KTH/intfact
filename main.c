@@ -84,6 +84,9 @@ int pollards(mpz_t N, mpz_t factors[FACTORS_ARRAY_SIZE], int num_factors) {
 
     //gmp_printf("number N: %Zd random number %Zd\n", N, rand);
 
+    //next_in_seq(next, prev, n);
+    //gmp_printf("next in sequence: %Zd\n", next);
+
     // TDOO: decide how to loop.
     //fix calculate_sequence function
     // Do GCD in gmp.
@@ -91,10 +94,11 @@ int pollards(mpz_t N, mpz_t factors[FACTORS_ARRAY_SIZE], int num_factors) {
     return num_factors;
 }
 
-
-
-
-
+void next_in_seq(mpz_t next, mpz_t prev, mpz_t N) {
+    mpz_pow_ui(next, prev, 2); // X^2
+    mpz_add_ui(next, next, 1); // X^2 + 1
+    mpz_mod(next, next, N);    // (X^2 + 1) mod N
+}
 
 void print_factors(mpz_t factors[FACTORS_ARRAY_SIZE], int num_factors) {
     int i;
