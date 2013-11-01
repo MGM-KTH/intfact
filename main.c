@@ -74,7 +74,7 @@ int find_trivial_factors(mpz_t N, mpz_t factors[]) {
 
 int pollards(mpz_t N, mpz_t factors[], int num_factors) {
     
-    // Fix random number container
+    // Initialize random number container
     mpz_t rand;
     mpz_init(rand);
 
@@ -88,8 +88,9 @@ int pollards(mpz_t N, mpz_t factors[], int num_factors) {
 
     //gmp_printf("number N: %Zd random number %Zd\n", N, rand);
 
-    //next_in_seq(next, prev, n);
-    //gmp_printf("next in sequence: %Zd\n", next);
+    // Call twice for prev 2i and once for prev i.
+    // next_in_seq(next, prev, N);
+    // gmp_printf("next in sequence: %Zd\n", next);
 
     // TDOO: decide how to loop.
     //fix calculate_sequence function
@@ -107,6 +108,7 @@ void next_in_seq(mpz_t next, mpz_t prev, mpz_t N) {
 void print_factors(mpz_t factors[], int num_factors) {
     int i;
     for (i = 0; i < num_factors; ++i) {
+        // This if-check is not needed anymore.
         if (factors[i] == 0) {
             break;
         }
