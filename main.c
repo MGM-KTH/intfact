@@ -88,7 +88,8 @@ int pollards(mpz_t N, mpz_t factors[], int num_factors) {
 
     //gmp_printf("number N: %Zd random number %Zd\n", N, rand);
 
-    // Call twice for prev 2i and once for prev i.
+    // TODO? Call twice for prev 2i and once for prev i.
+    // Fix global variables next + prev?
     // next_in_seq(next, prev, N);
     // gmp_printf("next in sequence: %Zd\n", next);
 
