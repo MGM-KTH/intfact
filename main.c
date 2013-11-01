@@ -25,18 +25,20 @@ int main(int argc, char *argv[]) {
 /*
  * Factorizes N using Pollard's rho method
  */
-void factorize(mpz_t N, mpz_t factors[FACTORS_ARRAY_SIZE]) {
+void factorize(mpz_t N, mpz_t factors[]) {
     // gmp_printf("Factorizing %Zd\n", N);
     int num_factors;
 
     num_factors = find_trivial_factors(N, factors);
-
-    if(mpz_cmp_si(N, 1) != 0) {
+    
+    // If N != 1 (not fully factorized)
+    if(mpz_cmp_si(N, 1) != 0) {    
         num_factors = pollards(N, factors, num_factors);
     }
 
     // gmp_printf("New N after trivial pruning: %Zd\n", N);
 
+    // If N != 1 (not fully factorized)
     if (mpz_cmp_si(N, 1)) {
         printf("%s\n", FAIL_STRING); // Print this if you can't factorize
     }
@@ -46,13 +48,15 @@ void factorize(mpz_t N, mpz_t factors[FACTORS_ARRAY_SIZE]) {
     printf("\n");
 }
 
-int find_trivial_factors(mpz_t N, mpz_t factors[FACTORS_ARRAY_SIZE]) {
+int find_trivial_factors(mpz_t N, mpz_t factors[]) {
     int i;
     int factor_index = 0;
     unsigned long int remainder;
     for (i = 0; i < FIRST_PRIMES_SIZE; ++i) {
         remainder = mpz_fdiv_ui(N, first_primes[i]);
         if (remainder == 0) {
+            // Remove all occurrences of this factor from N.
+            // All occurrences must be stored.
             while (remainder == 0) {
                 mpz_t factor;
                 mpz_init(factor);
@@ -68,7 +72,7 @@ int find_trivial_factors(mpz_t N, mpz_t factors[FACTORS_ARRAY_SIZE]) {
 }
 
 
-int pollards(mpz_t N, mpz_t factors[FACTORS_ARRAY_SIZE], int num_factors) {
+int pollards(mpz_t N, mpz_t factors[], int num_factors) {
     
     // Fix random number container
     mpz_t rand;
@@ -100,7 +104,7 @@ void next_in_seq(mpz_t next, mpz_t prev, mpz_t N) {
     mpz_mod(next, next, N);    // (X^2 + 1) mod N
 }
 
-void print_factors(mpz_t factors[FACTORS_ARRAY_SIZE], int num_factors) {
+void print_factors(mpz_t factors[], int num_factors) {
     int i;
     for (i = 0; i < num_factors; ++i) {
         if (factors[i] == 0) {
