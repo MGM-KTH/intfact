@@ -106,7 +106,7 @@ int pollards(mpz_t N, mpz_t factors[], int num_factors) {
     while(count < 1000000) {
         next_in_seq(xi, xi_last, N);
 
-        // TODO: Same as above. Next 2i is simply next-next-in-seq? i -> i+1 and 2i to 2i+2?
+        // TODO: Same as above. Next 2i is simply next-next-in-seq? i -> i+1 and 2i -> 2i+2?
         int i;
         for(i = 0; i < count; i++){
             next_in_seq(x2i, x2i_last, N);
@@ -119,7 +119,8 @@ int pollards(mpz_t N, mpz_t factors[], int num_factors) {
         if(mpz_cmp_si(d, 1) > 0) {
             gmp_printf("factor found: %Zd\n", d);
             mpz_set(factors[num_factors],d);
-            return 1;
+            ++num_factors; // connected to below comment.
+            return 1; // Shouldn't we divide and re-loop?
         }
         gmp_printf("numbers: xi = %Zd, x2i = %Zd\n", xi, x2i);
         gmp_printf("d = %Zd\n", d);
