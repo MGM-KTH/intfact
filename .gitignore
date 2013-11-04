@@ -25,3 +25,13 @@ main
 
 # Sublime Text files
 *.sublime*
+
+# Log files
+*.log
+
+# Latex files
+*.aux
+*.fdb_latexmk
+*.out
+*.synctex.gz
+*.pdf
