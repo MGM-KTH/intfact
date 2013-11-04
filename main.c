@@ -107,11 +107,8 @@ int pollards(mpz_t N, mpz_t factors[], int num_factors) {
         next_in_seq(xi, xi_last, N);
 
         // TODO: Same as above. Next 2i is simply next-next-in-seq? i -> i+1 and 2i -> 2i+2?
-        int i;
-        for(i = 0; i < count; i++){
-            next_in_seq(x2i, x2i_last, N);
-            mpz_set(x2i_last, x2i);
-        }
+        next_in_seq(x2i, x2i_last, N);
+        next_in_seq(x2i, x2i, N);
 
         mpz_sub(diff, x2i, xi);
         mpz_gcd(d, diff, N);
