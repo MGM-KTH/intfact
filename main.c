@@ -19,6 +19,7 @@ int main(int argc, char *argv[]) {
         mpz_set_str(current_N, line, 10);
         factorize(current_N, factors);
     }
+    // TODO: We could clear factors and current_N here, but it's pointless, right?
     return 0;
 }
 
@@ -52,14 +53,14 @@ int find_trivial_factors(mpz_t N, mpz_t factors[]) {
     int i;
     int factor_index = 0;
     unsigned long int remainder;
+    mpz_t factor;
+    mpz_init(factor);
     for (i = 0; i < FIRST_PRIMES_SIZE; ++i) {
         remainder = mpz_fdiv_ui(N, first_primes[i]);
         if (remainder == 0) {
             // Remove all occurrences of this factor from N.
             // All occurrences must be stored.
             while (remainder == 0) {
-                mpz_t factor;
-                mpz_init(factor);
                 mpz_set_ui(factor, first_primes[i]);
                 mpz_set(factors[factor_index], factor);
                 ++factor_index;
@@ -68,6 +69,7 @@ int find_trivial_factors(mpz_t N, mpz_t factors[]) {
             }
         } 
     }
+    mpz_clear(factor);
     return factor_index;
 }
 
@@ -88,7 +90,7 @@ int pollards(mpz_t N, mpz_t factors[], int num_factors) {
 
     mpz_t x2i_last;
     mpz_init(x2i_last);
-    next_in_seq(x2i_last, xi_last, N);
+    next_in_seq(x2i_last, xi_last, N); // TODO: Doesn't this give us x_(i+1) instead of x_2i?
 
     mpz_t xi;
     mpz_t x2i;
@@ -103,7 +105,7 @@ int pollards(mpz_t N, mpz_t factors[], int num_factors) {
     int count = 0;
     while(count < 100000) {
         next_in_seq(xi, xi_last, N);
-        next_in_seq(x2i, x2i_last, N);
+        next_in_seq(x2i, x2i_last, N); // TODO: Same as above. Next value in sequence instead of next-next?
 
         mpz_sub(diff, x2i, xi);
         mpz_gcd(d, diff, N);
@@ -121,14 +123,15 @@ int pollards(mpz_t N, mpz_t factors[], int num_factors) {
     //gmp_printf("number N: %Zd random number %Zd\n", N, rand);
 
     // TODO? Call twice for prev 2i and once for prev i.
-    // Fix global variables next + prev?
-    // next_in_seq(next, prev, N);
-    // gmp_printf("next in sequence: %Zd\n", next);
 
     // TDOO: decide how to loop.
-    //fix calculate_sequence function
-    // Do GCD in gmp.
-    // put into algorithm!
+
+    // Clear variables
+    mpz_clear(xi_last);
+    mpz_clear(x2i_last);
+    mpz_clear(xi);
+    mpz_clear(x2i);
+    mpz_clear(diff);
     return num_factors;
 }
 
