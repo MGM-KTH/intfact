@@ -30,6 +30,12 @@ void factorize(mpz_t N, mpz_t factors[]) {
     // gmp_printf("Factorizing %Zd\n", N);
     int num_factors;
 
+    if(mpz_probab_prime_p(N, 25) > 0) {
+        gmp_printf("%Zd\n", N);
+        printf("\n");
+        return;
+    }
+
     num_factors = find_trivial_factors(N, factors);
     
     // If N != 1 (not fully factorized)
