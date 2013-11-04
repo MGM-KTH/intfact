@@ -102,8 +102,12 @@ int pollards(mpz_t N, mpz_t factors[], int num_factors) {
     mpz_t d;
     mpz_init(d);
 
-    int count = 0;
-    while(count < 1000000) {
+    mpz_t count;
+    mpz_init_set_ui(count, 0);
+    mpz_t limit;
+    mpz_init(limit);
+    mpz_sqrt(limit, N);
+    while(mpz_cmp(count, limit)<0) {
         next_in_seq(xi, xi_last, N);
 
         // TODO: Same as above. Next 2i is simply next-next-in-seq? i -> i+1 and 2i -> 2i+2?
@@ -123,7 +127,7 @@ int pollards(mpz_t N, mpz_t factors[], int num_factors) {
         gmp_printf("d = %Zd\n", d);
         mpz_set(xi_last, xi);
         mpz_set(x2i_last, x2i);
-        ++count;
+        mpz_add_ui(count,count,1);
     }
 
     //gmp_printf("number N: %Zd random number %Zd\n", N, rand);
