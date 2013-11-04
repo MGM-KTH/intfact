@@ -75,8 +75,8 @@ int find_trivial_factors(mpz_t N, mpz_t factors[]) {
 int pollards(mpz_t N, mpz_t factors[], int num_factors) {
     
     // Initialize random number container
-    mpz_t rand;
-    mpz_init(rand);
+    mpz_t xi_last;
+    mpz_init(xi_last);
 
     // Initialize and seed a randstate
     gmp_randstate_t rand_state;
@@ -84,7 +84,39 @@ int pollards(mpz_t N, mpz_t factors[], int num_factors) {
     gmp_randseed_ui(rand_state, time(NULL));
 
     // Get random number
-    mpz_urandomm(rand, rand_state, N);
+    mpz_urandomm(xi_last, rand_state, N);
+
+    mpz_t x2i_last;
+    mpz_init(x2i_last);
+    next_in_seq(x2i_last, xi_last, N);
+
+    mpz_t xi;
+    mpz_t x2i;
+    mpz_t diff;
+    mpz_init(xi);
+    mpz_init(x2i);
+    mpz_init(diff);
+
+    mpz_t d;
+    mpz_init(d);
+
+    int count = 0;
+    while(count < 100000) {
+        next_in_seq(xi, xi_last, N);
+        next_in_seq(x2i, x2i_last, N);
+
+        mpz_sub(diff, x2i, xi);
+        mpz_gcd(d, diff, N);
+
+        if(mpz_cmp_si(d, 1) > 0) {
+            gmp_printf("factor found: %Zd", d);
+            break;
+        }
+        gmp_printf("numbers: xi = %Zd, x2i = %Zd\n", xi, x2i);
+        mpz_set(xi_last, xi);
+        mpz_set(x2i_last, x2i);
+        ++count;
+    }
 
     //gmp_printf("number N: %Zd random number %Zd\n", N, rand);
 
