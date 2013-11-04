@@ -35,3 +35,8 @@ main
 *.out
 *.synctex.gz
 *.pdf
+
+# KATTIS files
+submit.sh
+submit.py
+.kattisrc
