@@ -112,7 +112,14 @@ int pollards(mpz_t N, mpz_t factors[], int num_factors) {
     mpz_init_set_ui(count, 0);
     mpz_t limit;
     mpz_init(limit);
-    mpz_sqrt(limit, N);
+    if(mpz_sizeinbase(N,2) > 20) {
+        printf("hit limit\n");
+        mpz_set_ui(limit, 1000000);
+    }else{
+        mpz_sqrt(limit, N);
+    }
+    gmp_printf("N is %Zd, limit is %Zd\n", N, limit);
+
     while(mpz_cmp(count, limit)<0) {
         next_in_seq(xi, xi_last, N);
 
