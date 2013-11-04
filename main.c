@@ -33,8 +33,14 @@ void factorize(mpz_t N, mpz_t factors[]) {
     num_factors = find_trivial_factors(N, factors);
     
     // If N != 1 (not fully factorized)
-    if(mpz_cmp_si(N, 1) != 0) {    
-        num_factors = pollards(N, factors, num_factors);
+    int result;
+    while(mpz_cmp_si(N, 1) != 0) {    
+        result = pollards(N, factors, num_factors);
+        if (!result) {
+            break;
+        }
+        ++num_factors;
+
     }
 
     // gmp_printf("New N after trivial pruning: %Zd\n", N);
@@ -114,13 +120,13 @@ int pollards(mpz_t N, mpz_t factors[], int num_factors) {
         mpz_gcd(d, diff, N);
 
         if(mpz_cmp_si(d, 1) > 0) {
-            gmp_printf("factor found: %Zd\n", d);
+            // gmp_printf("factor found: %Zd\n", d);
             mpz_set(factors[num_factors],d);
-            ++num_factors; // connected to below comment.
-            return 1; // Shouldn't we divide and re-loop?
+            mpz_fdiv_q(N, N, d);
+            return 1; 
         }
-        gmp_printf("numbers: xi = %Zd, x2i = %Zd\n", xi, x2i);
-        gmp_printf("d = %Zd\n", d);
+        // gmp_printf("numbers: xi = %Zd, x2i = %Zd\n", xi, x2i);
+        // gmp_printf("d = %Zd\n", d);
         mpz_set(xi_last, xi);
         mpz_set(x2i_last, x2i);
         ++count;
@@ -138,7 +144,7 @@ int pollards(mpz_t N, mpz_t factors[], int num_factors) {
     mpz_clear(xi);
     mpz_clear(x2i);
     mpz_clear(diff);
-    return num_factors;
+    return 0;
 }
 
 void next_in_seq(mpz_t next, mpz_t prev, mpz_t N) {
