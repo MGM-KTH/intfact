@@ -134,6 +134,11 @@ int pollards(mpz_t N, mpz_t factors[], int num_factors) {
             // gmp_printf("factor found: %Zd\n", d);
             mpz_set(factors[num_factors],d);
             mpz_fdiv_q(N, N, d);
+            mpz_clear(xi_last);
+            mpz_clear(x2i_last);
+            mpz_clear(xi);
+            mpz_clear(x2i);
+            mpz_clear(diff);
             return 1; 
         }
         // gmp_printf("numbers: xi = %Zd, x2i = %Zd\n", xi, x2i);
