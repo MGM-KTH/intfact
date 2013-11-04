@@ -90,7 +90,7 @@ int pollards(mpz_t N, mpz_t factors[], int num_factors) {
 
     mpz_t x2i_last;
     mpz_init(x2i_last);
-    next_in_seq(x2i_last, xi_last, N); // TODO: Doesn't this give us x_(i+1) instead of x_2i?
+    next_in_seq(x2i_last, xi_last, N);
 
     mpz_t xi;
     mpz_t x2i;
