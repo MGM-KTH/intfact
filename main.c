@@ -27,14 +27,10 @@ int main(int argc, char *argv[]) {
  * Factorizes N using Pollard's rho method
  */
 void factorize(mpz_t N, mpz_t factors[]) {
-    // gmp_printf("Factorizing %Zd\n", N);
-
     int num_factors;
     num_factors = find_trivial_factors(N, factors);
-    // If N != 1 (not fully factorized)
-    int result;
 
-    
+    int result;
     do {
         if(mpz_probab_prime_p(N, 5)) {
             gmp_printf("%Zd\n", N);
@@ -47,8 +43,6 @@ void factorize(mpz_t N, mpz_t factors[]) {
         }
         ++num_factors;
     } while (mpz_cmp_si(N, 1) != 0);
-
-    // gmp_printf("New N after trivial pruning: %Zd\n", N);
 
     // If N != 1 (not fully factorized)
     if (mpz_cmp_si(N, 1)) {
