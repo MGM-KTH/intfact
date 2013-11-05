@@ -116,20 +116,20 @@ int pollards(mpz_t N, mpz_t factors[], int num_factors) {
     long int count = 0;
     long int limit;
     // gmp_printf("Number of bits: %lu\n", mpz_sizeinbase(N,2));
-    if (mpz_sizeinbase(N,2) > 84) {
+    if (mpz_sizeinbase(N,2) > 78) {
         return 0;
     }
     else if (mpz_sizeinbase(N,2) > 44) {
-        limit = 140000;
+        limit = 120000;
     } else if (mpz_sizeinbase(N,2) > 20) {
-        limit = 100000;
+        limit = 90000;
     } else {
-        limit = 20000;
+        limit = 14000;
     }
     // gmp_printf("N is %Zd, limit is %Zd\n", N, limit);
 
     long int r = 1;
-    long int m = 1000; // TODO: set appropriate value. log(N) << m << N^(1/4) ?
+    long int m = 100; // TODO: set appropriate value. log(N) << m << N^(1/4) ?
     long int k = 0;
     mpz_t q;
     mpz_init(q);
@@ -142,7 +142,18 @@ int pollards(mpz_t N, mpz_t factors[], int num_factors) {
     mpz_init(temp_abs);
 
     // printf("limit is: %lu\n", limit);
-    while(count < limit && mpz_cmp_si(d, 1) > 0) {
+    
+    // Tough primes to test:
+    // 38947539857394857374958374
+    // 16055930642404191022652830
+    // 23574372351791222645014404
+    // 30655492778990882331786734
+    // 1140925584794963113241931
+    // 734286514387144056614055
+    // 3979929034358890127857254
+    // 30126842333649376717015439
+    // 8355749255324197201318662
+    while(count < limit && mpz_cmp_si(d, 1) <= 0) {
         mpz_set(xi_last, x2i_last); // x = y
         long int i = 1;
         while (i < r) {
@@ -152,26 +163,29 @@ int pollards(mpz_t N, mpz_t factors[], int num_factors) {
         }
         long int j = 1;
         long int range = min(m, r-k);
-        while(j < range) {
-            // y = f(y)    
-            next_in_seq(x2i_last, x2i_last, N);
-            // q = q*|x-y| mod N
-            mpz_sub(temp_sub, xi_last, x2i_last);
-            mpz_set(temp_abs, temp_sub);
-            mpz_abs(temp_abs, temp_abs);
-            mpz_mul(q, q, temp_abs);
-            mpz_mod(q, q, N);
+        while ( k < r && mpz_cmp_si(d, 1) <= 0) {
+            while(j < range) {
+                // y = f(y)    
+                next_in_seq(x2i_last, x2i_last, N);
+                // q = q*|x-y| mod N
+                mpz_sub(temp_sub, xi_last, x2i_last);
+                mpz_set(temp_abs, temp_sub);
+                mpz_abs(temp_abs, temp_abs);
+                mpz_mul(q, q, temp_abs);
+                mpz_mod(q, q, N);
+                ++j;
+            }
+            mpz_gcd(d, q, N);
+            k = k + m;
+            ++count;
         }
-        mpz_gcd(d, q, N);
-        k = k + m;
-        ++j;
-        if ( k < r && mpz_cmp_si(d, 1) > 0) {
-            r = r*2;
-        }
-        ++count;
+        r = r*2;
     }
     if (mpz_cmp(d, N) == 0) {
-        while(1) {
+        // Kinda need z. 1000 too low? Skip entirely somehow?
+        // The paper says while(true)
+        int z = 0;
+        while(z < 1000) {
             next_in_seq(temp_x2i, temp_x2i,  N);
             mpz_sub(xi_last, xi_last, temp_x2i);
             mpz_set(q, xi_last);
@@ -179,6 +193,7 @@ int pollards(mpz_t N, mpz_t factors[], int num_factors) {
             if (mpz_cmp_si(d, 1) > 0) {
                 break;
             }
+            ++z;
         }
     }
     // Clear variables
@@ -194,13 +209,14 @@ int pollards(mpz_t N, mpz_t factors[], int num_factors) {
         mpz_clear(d);
         return 0;
     }
-    else if (mpz_cmp_si(d, 0) == 0) {
+    else if (mpz_cmp_si(d, 1) == 0 || mpz_cmp_si(d, 0) == 0) {
         mpz_clear(d);
         return 0;
     }
     else {
         mpz_set(factors[num_factors],d);
-        mpz_fdiv_q(N, N, d);
+        // mpz_fdiv_q(N, N, d);
+        mpz_divexact(N,N, d);
         mpz_clear(d);
         return 1;
     }
