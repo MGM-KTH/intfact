@@ -39,4 +39,5 @@ main
 # KATTIS files
 submit.sh
 submit.py
+submit
 .kattisrc
