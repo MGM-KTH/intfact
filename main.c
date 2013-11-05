@@ -28,26 +28,25 @@ int main(int argc, char *argv[]) {
  */
 void factorize(mpz_t N, mpz_t factors[]) {
     // gmp_printf("Factorizing %Zd\n", N);
+
     int num_factors;
-
-    if(mpz_probab_prime_p(N, 25) > 0) {
-        gmp_printf("%Zd\n", N);
-        printf("\n");
-        return;
-    }
-
     num_factors = find_trivial_factors(N, factors);
-    
     // If N != 1 (not fully factorized)
     int result;
-    while(mpz_cmp_si(N, 1) != 0) {    
+
+    
+    do {
+        if(mpz_probab_prime_p(N, 5)) {
+            gmp_printf("%Zd\n", N);
+            mpz_set_ui(N, 1);
+            break;
+        }
         result = pollards(N, factors, num_factors);
         if (!result) {
             break;
         }
         ++num_factors;
-
-    }
+    } while (mpz_cmp_si(N, 1) != 0);
 
     // gmp_printf("New N after trivial pruning: %Zd\n", N);
 
@@ -118,13 +117,14 @@ int pollards(mpz_t N, mpz_t factors[], int num_factors) {
     mpz_init_set_ui(count, 0);
     mpz_t limit;
     mpz_init(limit);
-    if(mpz_sizeinbase(N,2) > 20) {
-        printf("hit limit\n");
-        mpz_set_ui(limit, 1000000);
-    }else{
-        mpz_sqrt(limit, N);
+    if (mpz_sizeinbase(N,2) > 40) {
+        mpz_set_ui(limit, 100000);
+    } else if (mpz_sizeinbase(N,2) > 20) {
+        mpz_set_ui(limit, 90000);
+    } else {
+        mpz_set_ui(limit, 20000);
     }
-    gmp_printf("N is %Zd, limit is %Zd\n", N, limit);
+    // gmp_printf("N is %Zd, limit is %Zd\n", N, limit);
 
     while(mpz_cmp(count, limit)<0) {
         next_in_seq(xi, xi_last, N);
@@ -140,11 +140,6 @@ int pollards(mpz_t N, mpz_t factors[], int num_factors) {
             // gmp_printf("factor found: %Zd\n", d);
             mpz_set(factors[num_factors],d);
             mpz_fdiv_q(N, N, d);
-            mpz_clear(xi_last);
-            mpz_clear(x2i_last);
-            mpz_clear(xi);
-            mpz_clear(x2i);
-            mpz_clear(diff);
             return 1; 
         }
         // gmp_printf("numbers: xi = %Zd, x2i = %Zd\n", xi, x2i);
