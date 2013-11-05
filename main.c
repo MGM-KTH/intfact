@@ -31,7 +31,7 @@ void factorize(mpz_t N, mpz_t factors[]) {
     num_factors = find_trivial_factors(N, factors);
 
     int result;
-    do {
+    while (mpz_cmp_si(N, 1) != 0) {
         if(mpz_probab_prime_p(N, 5)) {
             gmp_printf("%Zd\n", N);
             mpz_set_ui(N, 1);
@@ -42,7 +42,7 @@ void factorize(mpz_t N, mpz_t factors[]) {
             break;
         }
         ++num_factors;
-    } while (mpz_cmp_si(N, 1) != 0);
+    }
 
     // If N != 1 (not fully factorized)
     if (mpz_cmp_si(N, 1)) {
@@ -83,19 +83,20 @@ int pollards(mpz_t N, mpz_t factors[], int num_factors) {
     
     // Initialize random number container
     mpz_t xi_last;
-    mpz_init(xi_last);
+    mpz_init_set_ui(xi_last, 1);
 
     // Initialize and seed a randstate
-    gmp_randstate_t rand_state;
-    gmp_randinit_default(rand_state);
-    gmp_randseed_ui(rand_state, time(NULL));
+    // gmp_randstate_t rand_state;
+    // gmp_randinit_default(rand_state);
+    // gmp_randseed_ui(rand_state, time(NULL));
 
     // Get random number
-    mpz_urandomm(xi_last, rand_state, N);
+    // mpz_urandomm(xi_last, rand_state, N);
 
     mpz_t x2i_last;
-    mpz_init(x2i_last);
-    next_in_seq(x2i_last, xi_last, N);
+    // mpz_init(x2i_last);
+    // next_in_seq(x2i_last, xi_last, N);
+    mpz_init_set_ui(x2i_last, 2);
 
     mpz_t xi;
     mpz_t x2i;
@@ -106,61 +107,108 @@ int pollards(mpz_t N, mpz_t factors[], int num_factors) {
 
     mpz_t d;
     mpz_init(d);
+    // Pollard's + Brent's improvement. Only calculate GCD every now and then on the product of the diffs.
+    // mpz_t gMul;
+    // mpz_init_set_ui(gMul, 1);
+    // mpz_t r;
+    // mpz_init(r);
 
-    mpz_t count;
-    mpz_init_set_ui(count, 0);
-    mpz_t limit;
-    mpz_init(limit);
-    if (mpz_sizeinbase(N,2) > 40) {
-        mpz_set_ui(limit, 100000);
+    long int count = 0;
+    long int limit;
+    // gmp_printf("Number of bits: %lu\n", mpz_sizeinbase(N,2));
+    if (mpz_sizeinbase(N,2) > 84) {
+        return 0;
+    }
+    else if (mpz_sizeinbase(N,2) > 44) {
+        limit = 140000;
     } else if (mpz_sizeinbase(N,2) > 20) {
-        mpz_set_ui(limit, 90000);
+        limit = 100000;
     } else {
-        mpz_set_ui(limit, 20000);
+        limit = 20000;
     }
     // gmp_printf("N is %Zd, limit is %Zd\n", N, limit);
 
-    while(mpz_cmp(count, limit)<0) {
-        next_in_seq(xi, xi_last, N);
+    long int r = 1;
+    long int m = 1000; // TODO: set appropriate value. log(N) << m << N^(1/4) ?
+    long int k = 0;
+    mpz_t q;
+    mpz_init(q);
+    mpz_t temp_x2i;
+    mpz_init(temp_x2i);
+    mpz_t temp_sub;
+    mpz_init(temp_sub);
 
-        // TODO: Same as above. Next 2i is simply next-next-in-seq? i -> i+1 and 2i -> 2i+2?
-        next_in_seq(x2i, x2i_last, N);
-        next_in_seq(x2i, x2i, N);
+    mpz_t temp_abs;
+    mpz_init(temp_abs);
 
-        mpz_sub(diff, x2i, xi);
-        mpz_gcd(d, diff, N);
-
-        if(mpz_cmp_si(d, 1) > 0) {
-            // gmp_printf("factor found: %Zd\n", d);
-            mpz_set(factors[num_factors],d);
-            mpz_fdiv_q(N, N, d);
-            return 1; 
+    // printf("limit is: %lu\n", limit);
+    while(count < limit && mpz_cmp_si(d, 1) > 0) {
+        mpz_set(xi_last, x2i_last); // x = y
+        long int i = 1;
+        while (i < r) {
+            next_in_seq(x2i_last, x2i_last, N); 
+            ++i;
+            k = 0; // why not outside this loop?
         }
-        // gmp_printf("numbers: xi = %Zd, x2i = %Zd\n", xi, x2i);
-        // gmp_printf("d = %Zd\n", d);
-        mpz_set(xi_last, xi);
-        mpz_set(x2i_last, x2i);
-        mpz_add_ui(count,count,1);
+        long int j = 1;
+        long int range = min(m, r-k);
+        while(j < range) {
+            // y = f(y)    
+            next_in_seq(x2i_last, x2i_last, N);
+            // q = q*|x-y| mod N
+            mpz_sub(temp_sub, xi_last, x2i_last);
+            mpz_set(temp_abs, temp_sub);
+            mpz_abs(temp_abs, temp_abs);
+            mpz_mul(q, q, temp_abs);
+            mpz_mod(q, q, N);
+        }
+        mpz_gcd(d, q, N);
+        k = k + m;
+        ++j;
+        if ( k < r && mpz_cmp_si(d, 1) > 0) {
+            r = r*2;
+        }
+        ++count;
     }
-
-    //gmp_printf("number N: %Zd random number %Zd\n", N, rand);
-
-    // TODO? Call twice for prev 2i and once for prev i.
-
-    // TDOO: decide how to loop.
-
+    if (mpz_cmp(d, N) == 0) {
+        while(1) {
+            next_in_seq(temp_x2i, temp_x2i,  N);
+            mpz_sub(xi_last, xi_last, temp_x2i);
+            mpz_set(q, xi_last);
+            mpz_gcd(d, q, N);
+            if (mpz_cmp_si(d, 1) > 0) {
+                break;
+            }
+        }
+    }
     // Clear variables
     mpz_clear(xi_last);
     mpz_clear(x2i_last);
     mpz_clear(xi);
     mpz_clear(x2i);
     mpz_clear(diff);
-    return 0;
+    mpz_clear(q);
+    mpz_clear(temp_abs);
+    mpz_clear(temp_x2i);
+    if (mpz_cmp(d, N) == 0) {
+        mpz_clear(d);
+        return 0;
+    }
+    else if (mpz_cmp_si(d, 0) == 0) {
+        mpz_clear(d);
+        return 0;
+    }
+    else {
+        mpz_set(factors[num_factors],d);
+        mpz_fdiv_q(N, N, d);
+        mpz_clear(d);
+        return 1;
+    }
 }
 
 void next_in_seq(mpz_t next, mpz_t prev, mpz_t N) {
     mpz_pow_ui(next, prev, 2); // X^2
-    mpz_add_ui(next, next, 1); // X^2 + 1
+    mpz_add_ui(next, next, 3); // X^2 + 1
     mpz_mod(next, next, N);    // (X^2 + 1) mod N
 }
 
@@ -174,3 +222,8 @@ void print_factors(mpz_t factors[], int num_factors) {
         gmp_printf("%Zd\n", factors[i]);
     }
 }
+
+long int min(long int a, long int b) {
+    return (a < b ? a : b);
+}
+
