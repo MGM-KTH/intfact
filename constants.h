@@ -1,7 +1,7 @@
 #ifndef CONSTANTS_H
 #define CONSTANTS_H
 
-#define FIRST_PRIMES_SIZE 1000
+#define FIRST_PRIMES_SIZE 400
 unsigned long int first_primes[10000] = {    
       2,      3,      5,      7,     11,     13,     17,     19,     23,     29, 
      31,     37,     41,     43,     47,     53,     59,     61,     67,     71, 

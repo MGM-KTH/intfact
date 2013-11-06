@@ -30,20 +30,24 @@ void factorize(mpz_t N, mpz_t factors[]) {
     int num_factors;
     num_factors = find_trivial_factors(N, factors);
 
-    int result;
-    while (mpz_cmp_si(N, 1) != 0) {
-        //printf("here\n");
-        if(mpz_probab_prime_p(N, 5)) {
-            gmp_printf("%Zd\n", N);
-            mpz_set_ui(N, 1);
-            break;
+    if(mpz_probab_prime_p(N, 5)) {
+        gmp_printf("%Zd\n", N);
+        mpz_set_ui(N, 1);
+    }   
+    else if (mpz_sizeinbase(N,2) < 91) {
+        int result;
+        while (mpz_cmp_si(N, 1) != 0) {
+            if(mpz_probab_prime_p(N, 5)) {
+                gmp_printf("%Zd\n", N);
+                mpz_set_ui(N, 1);
+                break;
+            }
+            result = pollards(N, factors, num_factors);
+            if (!result) {
+                break;
+            }
+            ++num_factors;
         }
-        result = pollards(N, factors, num_factors);
-        //printf("result = %d\n", result);
-        if (!result) {
-            break;
-        }
-        ++num_factors;
     }
 
     // If N != 1 (not fully factorized)
@@ -95,31 +99,32 @@ int pollards(mpz_t N, mpz_t factors[], int num_factors) {
 
     long int count = 0;
     // Same limit for all numbers
-    long int limit = 160000;
+    long int limit; // = 130000;
     // gmp_printf("Number of bits: %lu\n", mpz_sizeinbase(N,2));
-    // if (mpz_sizeinbase(N,2) > 78) {
-    //     return 0;
-    // }
-    // else if (mpz_sizeinbase(N,2) > 44) {
-    //     limit = 120000;
-    // } else if (mpz_sizeinbase(N,2) > 20) {
-    //     limit = 90000;
-    // } else {
-    //     limit = 14000;
-    // }
-    // // gmp_printf("N is %Zd, limit is %Zd\n", N, limit);
+    int size_in_base_two = mpz_sizeinbase(N,2);
+    if (size_in_base_two > 89) {
+        limit = 10000;
+    }
+    else if (size_in_base_two > 70) {
+        limit = 90000;
+    } else if (size_in_base_two > 50) {
+        limit = 60000;
+    } else if (size_in_base_two > 30) {
+        limit = 30000;
+    } else {
+        limit = 20000;
+    }
 
     long int r = 1;
-    long int m = 100; // TODO: set appropriate value. log(N) << m << N^(1/4) ?
+    // TODO: Wrong Answer for m = 77, 100 or 101. Why??? (37, 47, 67, 97 works).
+    long int m = 67; // TODO: set appropriate value. log(N) << m << N^(1/4) ?
     long int k = 0;
     mpz_t q;
     mpz_t temp_var;
     mpz_t ys;
-    mpz_t power_of_two;
-    mpz_init(q);
+    mpz_init_set_ui(q, 1);
     mpz_init(temp_var);
     mpz_init(ys);
-    mpz_init(power_of_two);
 
     // printf("limit is: %lu\n", limit);
     
@@ -133,22 +138,20 @@ int pollards(mpz_t N, mpz_t factors[], int num_factors) {
     // 3979929034358890127857254
     // 30126842333649376717015439
     // 8355749255324197201318662
-    while(count < limit && mpz_cmp_si(d, 1) <= 0) {
-        mpz_set(x, y); // x = y
+    do {
+        mpz_set(x, y);
         long int i = 0;
         while (i < r) {
-            next_in_seq(y, y, N); 
+            next_in_seq(y, y, N); // y = f(y)
             ++i;
         }
         k = 0;
-        long int j = 0;
-        long int range = min(m, r-k);
-        while ( k < r && mpz_cmp_si(d, 1) <= 0) {
+        do {
+            long int j = 0;
+            long int range = min(m, r-k);
             mpz_set(ys, y);
             while(j < range) {
-                // y = f(y)    
-                next_in_seq(y, y, N);
-                // q = q*|x-y| mod N
+                next_in_seq(y, y, N); // y = f(y)
                 mpz_sub(temp_var, x, y);
                 mpz_abs(temp_var, temp_var);
                 mpz_mul(q, q, temp_var);
@@ -158,22 +161,21 @@ int pollards(mpz_t N, mpz_t factors[], int num_factors) {
             mpz_gcd(d, q, N);
             k = k + m;
             ++count;
-            //printf("k = %ld, r = %ld\n", k, r);
-        }
+        } while ( k < r && mpz_cmp_si(d, 1) == 0 && count < limit);
         r = r*2;
-        // gmp_printf("d is %Zd\n", d);
-    }
+    } while(count < limit && mpz_cmp_si(d, 1) <= 0);
     //gmp_printf("d is %Zd\n", d);
     if (mpz_cmp(d, N) == 0) {
-        while (mpz_cmp_si(d,1) <= 0) {
+        count = 0;
+        do {
             next_in_seq(ys, ys,  N);
             mpz_sub(temp_var, x, ys);
             mpz_abs(temp_var, temp_var);
             mpz_gcd(d, temp_var, N);
-            if (mpz_cmp_si(d, 1) > 0) {
-                break;
-            }
-        }
+            // gmp_printf("temp_var is %Zd,  ", temp_var);
+            // gmp_printf("d is %Zd\n", d);
+            ++count;
+        } while (mpz_cmp_si(d,1) == 0 && count < limit);
     }
     // Clear variables
     mpz_clear(x);
@@ -182,7 +184,7 @@ int pollards(mpz_t N, mpz_t factors[], int num_factors) {
     mpz_clear(temp_var);
 
     if (mpz_cmp(d, N) == 0) {
-        // printf("d==N, fail!\n");
+        printf("d==N, fail!\n");
         mpz_clear(d);
         return 0;
     }
@@ -203,7 +205,8 @@ int pollards(mpz_t N, mpz_t factors[], int num_factors) {
 
 void next_in_seq(mpz_t next, mpz_t prev, mpz_t N) {
     mpz_pow_ui(next, prev, 2); // X^2
-    mpz_add_ui(next, next, 3); // X^2 + 1
+    // TLE for +3, (more or less) regardless of #iterations
+    mpz_add_ui(next, next, 1); // X^2 + 1
     mpz_mod(next, next, N);    // (X^2 + 1) mod N
 }
 
