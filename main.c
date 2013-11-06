@@ -34,7 +34,7 @@ void factorize(mpz_t N, mpz_t factors[]) {
     while (mpz_cmp_si(N, 1) != 0) {
         //printf("here\n");
         if(mpz_probab_prime_p(N, 5)) {
-            //gmp_printf("%Zd\n", N);
+            gmp_printf("%Zd\n", N);
             mpz_set_ui(N, 1);
             break;
         }
@@ -85,52 +85,41 @@ int pollards(mpz_t N, mpz_t factors[], int num_factors) {
     
     // Initialize random number container
     mpz_t x;
-    mpz_init_set_ui(x, 1);
-
-    // Initialize and seed a randstate
-    // gmp_randstate_t rand_state;
-    // gmp_randinit_default(rand_state);
-    // gmp_randseed_ui(rand_state, time(NULL));
-
-    // Get random number
-    // mpz_urandomm(x, rand_state, N);
+    mpz_init_set_ui(x, 2);
 
     mpz_t y;
-    // mpz_init(y);
-    // next_in_seq(y, x, N);
     mpz_init_set_ui(y, 2);
 
     mpz_t d;
     mpz_init(d);
-    // Pollard's + Brent's improvement. Only calculate GCD every now and then on the product of the diffs.
-    // mpz_t gMul;
-    // mpz_init_set_ui(gMul, 1);
-    // mpz_t r;
-    // mpz_init(r);
 
     long int count = 0;
-    long int limit;
+    // Same limit for all numbers
+    long int limit = 160000;
     // gmp_printf("Number of bits: %lu\n", mpz_sizeinbase(N,2));
-    if (mpz_sizeinbase(N,2) > 78) {
-        return 0;
-    }
-    else if (mpz_sizeinbase(N,2) > 44) {
-        limit = 120000;
-    } else if (mpz_sizeinbase(N,2) > 20) {
-        limit = 90000;
-    } else {
-        limit = 14000;
-    }
-    // gmp_printf("N is %Zd, limit is %Zd\n", N, limit);
+    // if (mpz_sizeinbase(N,2) > 78) {
+    //     return 0;
+    // }
+    // else if (mpz_sizeinbase(N,2) > 44) {
+    //     limit = 120000;
+    // } else if (mpz_sizeinbase(N,2) > 20) {
+    //     limit = 90000;
+    // } else {
+    //     limit = 14000;
+    // }
+    // // gmp_printf("N is %Zd, limit is %Zd\n", N, limit);
 
     long int r = 1;
     long int m = 100; // TODO: set appropriate value. log(N) << m << N^(1/4) ?
     long int k = 0;
     mpz_t q;
     mpz_t temp_var;
-
+    mpz_t ys;
+    mpz_t power_of_two;
     mpz_init(q);
     mpz_init(temp_var);
+    mpz_init(ys);
+    mpz_init(power_of_two);
 
     // printf("limit is: %lu\n", limit);
     
@@ -155,12 +144,12 @@ int pollards(mpz_t N, mpz_t factors[], int num_factors) {
         long int j = 0;
         long int range = min(m, r-k);
         while ( k < r && mpz_cmp_si(d, 1) <= 0) {
+            mpz_set(ys, y);
             while(j < range) {
                 // y = f(y)    
                 next_in_seq(y, y, N);
                 // q = q*|x-y| mod N
                 mpz_sub(temp_var, x, y);
-                //§mpz_set(temp_abs, temp_var);
                 mpz_abs(temp_var, temp_var);
                 mpz_mul(q, q, temp_var);
                 mpz_mod(q, q, N);
@@ -172,23 +161,18 @@ int pollards(mpz_t N, mpz_t factors[], int num_factors) {
             //printf("k = %ld, r = %ld\n", k, r);
         }
         r = r*2;
-        //gmp_printf("d is %Zd\n", d);
+        // gmp_printf("d is %Zd\n", d);
     }
     //gmp_printf("d is %Zd\n", d);
     if (mpz_cmp(d, N) == 0) {
-        //gmp_printf("d==N: d = %Zd  N = %Zd\n", d, N);
-        // Kinda need z. 1000 too low? Skip entirely somehow?
-        // The paper says while(true)
-        int z = 0;
-        while(z < 1000) {
-            next_in_seq(y, y,  N);
-            mpz_sub(temp_var, x, y);
-            //mpz_set(q, temp_var);
+        while (mpz_cmp_si(d,1) <= 0) {
+            next_in_seq(ys, ys,  N);
+            mpz_sub(temp_var, x, ys);
+            mpz_abs(temp_var, temp_var);
             mpz_gcd(d, temp_var, N);
             if (mpz_cmp_si(d, 1) > 0) {
                 break;
             }
-            ++z;
         }
     }
     // Clear variables
@@ -198,17 +182,17 @@ int pollards(mpz_t N, mpz_t factors[], int num_factors) {
     mpz_clear(temp_var);
 
     if (mpz_cmp(d, N) == 0) {
-        //printf("d==N, fail!\n");
+        // printf("d==N, fail!\n");
         mpz_clear(d);
         return 0;
     }
     else if (mpz_cmp_si(d, 1) == 0 || mpz_cmp_si(d, 0) == 0) {
-        //gmp_printf("d is trivial: d=%Zd\n",d);
+        // gmp_printf("d is trivial: d=%Zd\n",d);
         mpz_clear(d);
         return 0;
     }
     else {
-        //printf("d is factor!!!!\n");
+        // printf("d is factor!!!!\n");
         mpz_set(factors[num_factors],d);
         // mpz_fdiv_q(N, N, d);
         mpz_divexact(N,N, d);
