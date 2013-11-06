@@ -237,4 +237,3 @@ void print_factors(mpz_t factors[], int num_factors) {
 long int min(long int a, long int b) {
     return (a < b ? a : b);
 }
-
