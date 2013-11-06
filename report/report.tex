@@ -7,7 +7,7 @@
 % http://www.LaTeXTemplates.com
 %
 % Original author:
-% Frits Wenneker (http://www.howtotex.com) 
+% Frits Wenneker (http://www.howtotex.com)
 %
 % License:
 % CC BY-NC-SA 3.0 (http://creativecommons.org/licenses/by-nc-sa/3.0/)
@@ -42,6 +42,8 @@
 \usepackage{hyperref}
 \usepackage{url}
 \usepackage[parfill]{parskip}   % Sets newlines between paragraphs
+\usepackage{algorithm2e} % Used for pseudocode
+\providecommand{\abs}[1]{\lvert#1\rvert} % \abs{x+y} produces |x+y|
 
 
 
@@ -106,9 +108,41 @@ The fundamental theorem of arithmetic states that every positive integer (> 1) i
 %	SECTION 2
 %-------------------------------------------------------------------------------
 \section{Method}
+The factorization program was written in |C| and uses the library GMP\footnote{\url{http://gmplib.org}} to represent large numbers, perform functions such as primality testing and GCD.
 
+The first algorithm used was Pollard's rho algorithm (PR). A static list of the first 10 000 primes was used to weed out trivial primes with trial division. When using PR only the first 500-2000 primes are used.
+
+Before each iteration of PR, primality testing is performed. This is done using GMP's built-in function |mpz_probab_prime| which uses trial division and Miller-Rabin probabilistic primality tests internally.\footnote{\url{http://gmplib.org/manual/Number-Theoretic-Functions.html}}
+
+
+In the pseudocode below, the pseudo-random generator $f(x)$ is defined as: $x^2+C\, (mod\, N)$, where $C$ is an arbitrary constant which maintains the property $x = y\, (mod\; p) \rightarrow f(x) = f(y)\,(mod\; p)$.\\
+
+\begin{algorithm}[H]
+ \SetAlgoLined % For previous releases [?]
+ \textbf{Input:} {A composite number N}\\
+ \textbf{Output:} {A non-trivial factor of N}\\
+ let $x_0 \in_U \mathbb{Z}_N$\\
+ $x = x_0$\\
+ $y = x_0$\\
+ \While{True}{
+  $x := f(x)$\;
+  $y := f(f(y))$\;
+  $d := gcd( \abs{y-x}, N)$\;
+  \If{$d > 1$}{
+   return d\;
+   }
+ }
+ \caption{Pseudocode for Pollard's rho algorithm}
+\end{algorithm}
+
+\hspace{0pt}\\\\
+In practice, the $while$-loop runs a finite number of times, since Pollard's rho algorithm can fail to find factors, and since the program has a deadline to keep.
 
 Pollard's rho algorithm (PR) (\url{http://en.wikipedia.org/wiki/Pollard's_rho_algorithm})
+
+
+Brent's factorization method (BFM) (\url{http://maths-people.anu.edu.au/~brent/pub/pub051.html})
+
 Another paper that describes several algorithms, including Brent (not the version we're using, this one gave $\sim$57 in Kattis. A lot simpler though.): \url{http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.117.1230&rep=rep1&type=pdf}
 
 
@@ -123,10 +157,18 @@ Fermat's factorization method (FFM) (\url{http://en.wikipedia.org/wiki/Fermat's_
 %-------------------------------------------------------------------------------
 
 \section{Results}
-gooby pls. 101pts
 
-sources
-http://maths-people.anu.edu.au/~brent/pub/pub051.html
+
+    \begin{tabular}{|c|c|c|c|c|}
+    \hline
+    \textbf{Algorithm} & \textbf{Factorized numbers} \\ \hline
+    Trial division & 11 \\ \hline
+    Trial division + mpz\_probab\_prime & 19 \\ \hline
+    Pollard's rho & 73 \\ \hline
+    Brent's & 84 \\ \hline
+    \end{tabular}
+    \hspace{10pt}
+
 
 \end{document}
 
