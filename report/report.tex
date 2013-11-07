@@ -119,6 +119,20 @@ Brent's factorization method (BFM) \cite{brent}
 \subsubsection{Fermats Factorization Method}
 Fermat's factorization method (FFM) \cite{fermat}
 
+\begin{algorithm}[H]
+ \SetAlgoLined % For previous releases [?]
+ \textbf{Input:} {A composite number N}\\
+ \textbf{Output:} {A non-trivial factor of N}\\
+ $a := ceil(sqrt(N))$\\
+ $b2 := a*a - N$\\
+ \While{b2 isn't a square}{
+  $a := a+1$\;
+  $b2 := a*a - N$\;
+  }
+  return $a-sqrt(b2)$\;
+ \caption{Pseudocode for Fermats Factorization Method taken from wikipedia}
+\end{algorithm}
+
 \subsubsection{Quadratic Sieve}
 The quadratic sieve (QS) \cite{qsieve}
 
@@ -138,8 +152,8 @@ In the pseudocode below, the pseudo-random generator $f(x)$ is defined as: $x^2+
  \textbf{Input:} {A composite number N}\\
  \textbf{Output:} {A non-trivial factor of N}\\
  let $x_0 \in_U \mathbb{Z}_N$\\
- $x = x_0$\\
- $y = x_0$\\
+ $x := x_0$\\
+ $y := x_0$\\
  \While{True}{
   $x := f(x)$\;
   $y := f(f(y))$\;
