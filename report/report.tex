@@ -121,7 +121,11 @@ This is better than arbitrarily testing random numbers modulo $N$.
 Firstly since if $N$ is composite, at least one divisor $d$ has to be less than or equal to $\sqrt{N}$.
 blablablabla står en del i citerade man kanske kan nämna\cite{csh}
 
-Brent's factorization method (BFM) \cite{brent} 
+Some improvements where made to the algorithm by Richard Brent and Pollard.\cite{brent}
+These improvements mostly center around the fact that multiplying consecutive differences $x_{2i}-x_i$ preserves any divisor $d$ of $N$.
+Therefore the computation of a greatest common divisor, which is expensive, can be performed a lot less.
+This can however introduce problems if the product $q$ grows to $q = 0 \bmod N$, which leads to finding the factor $d=N$.
+However, this can be countered by not multiplying too many times, and to backtrack to the last $x_i$ and $x_{2i}$ and performing the regular pollard rho procedure if a factor $d=N$ is discovered.
 
 \subsubsection{Fermats Factorization Method}
 Fermat's factorization method (FFM) \cite{fermat} is based on the ability to represent an odd integer as the difference of two squares $N = a^2 - b^2$.
@@ -214,6 +218,3 @@ discuss stuff here
 \end{thebibliography}
 
 \end{document}
-
-
-
