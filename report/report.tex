@@ -108,9 +108,25 @@ The fundamental theorem of arithmetic states that every positive integer (> 1) i
 %	SECTION 2
 %-------------------------------------------------------------------------------
 \section{Method}
-The factorization program was written in |C| and uses the library GMP\cite{gmp} to represent large numbers, perform functions such as primality testing and GCD.
-
+\subsection{Algorithms}
+\subsubsection{Pollard's Rho}
 The first algorithm used was Pollard's rho algorithm (PR). A static list of the first 10 000 primes was used to weed out trivial primes with trial division. When using PR only the first 500-2000 primes are used.
+
+Pollard's rho algorithm (PR) \cite{pollard}
+
+Brent's factorization method (BFM) \cite{brent} 
+
+\subsubsection{Fermats Factorization Method}
+Fermat's factorization method (FFM) \cite{fermat}
+
+\subsubsection{Quadratic Sieve}
+The quadratic sieve (QS) \cite{qsieve}
+
+\subsection{Implementation}
+In practice, the $while$-loop runs a finite number of times, since Pollard's rho algorithm can fail to find factors, and since the program has a deadline to keep.
+Another paper that describes several algorithms, including Brent (not the version we're using, this one gave $\sim$57 in Kattis. A lot simpler though.)\cite{otherpaper}
+
+The factorization program was written in |C| and uses the library GMP\cite{gmp} to represent large numbers, perform functions such as primality testing and GCD.
 
 Before each iteration of PR, primality testing is performed. This is done using GMP's built-in function |mpz_probab_prime| which uses trial division and Miller-Rabin probabilistic primality tests internally.\cite{probabprime}
 
@@ -136,22 +152,6 @@ In the pseudocode below, the pseudo-random generator $f(x)$ is defined as: $x^2+
 \end{algorithm}
 
 \hspace{0pt}\\\\
-In practice, the $while$-loop runs a finite number of times, since Pollard's rho algorithm can fail to find factors, and since the program has a deadline to keep.
-
-Pollard's rho algorithm (PR) \cite{pollard}
-
-
-Brent's factorization method (BFM) \cite{brent} 
-
-Another paper that describes several algorithms, including Brent (not the version we're using, this one gave $\sim$57 in Kattis. A lot simpler though.)\cite{otherpaper}
-
-
-\subsection{Alternative methods}
-
-The quadratic sieve (QS) \cite{qsieve}
-
-Fermat's factorization method (FFM) \cite{fermat}
-
 %-------------------------------------------------------------------------------
 %   SECTION 3
 %-------------------------------------------------------------------------------
@@ -168,6 +168,11 @@ Fermat's factorization method (FFM) \cite{fermat}
     Brent's & 84 \\ \hline
     \end{tabular}
     \hspace{10pt}
+
+
+\subsection{Discussion}
+
+discuss stuff here
 
 \begin{thebibliography}{9}
 
