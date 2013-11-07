@@ -34,7 +34,7 @@ void factorize(mpz_t N, mpz_t factors[]) {
         gmp_printf("%Zd\n", N);
         mpz_set_ui(N, 1);
     }   
-    else if (mpz_sizeinbase(N,2) < 91) {
+    else if (mpz_sizeinbase(N,2) < 95) {
         int result;
         while (mpz_cmp_si(N, 1) != 0) {
             if(mpz_probab_prime_p(N, 5)) {
@@ -103,14 +103,14 @@ int pollards(mpz_t N, mpz_t factors[], int num_factors) {
     // gmp_printf("Number of bits: %lu\n", mpz_sizeinbase(N,2));
     int size_in_base_two = mpz_sizeinbase(N,2);
     if (size_in_base_two > 89) {
-        limit = 10000;
+        limit = 5000;
     }
     else if (size_in_base_two > 70) {
-        limit = 90000;
+        limit = 80000;
     } else if (size_in_base_two > 50) {
-        limit = 60000;
+        limit = 50000;
     } else if (size_in_base_two > 30) {
-        limit = 30000;
+        limit = 40000;
     } else {
         limit = 20000;
     }
