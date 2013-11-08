@@ -33,7 +33,7 @@ void factorize(mpz_t N, mpz_t factors[]) {
     if(mpz_probab_prime_p(N, 5)) {
         gmp_printf("%Zd\n", N);
         mpz_set_ui(N, 1);
-    }else if(mpz_sizeinbase(N,2) < 70){
+    }else if(mpz_sizeinbase(N,2) < 80){
 
         int result;
         while (mpz_cmp_si(N, 1) != 0) {
@@ -103,6 +103,7 @@ int fermat(mpz_t N, mpz_t factors[], int num_factors) {
     mpz_init_set_ui(count, 0);
     mpz_t limit;
     mpz_init(limit);
+    /*
     if (mpz_sizeinbase(N,2) > 40) {
         mpz_set_ui(limit, 100000);
     } else if (mpz_sizeinbase(N,2) > 20) {
@@ -110,6 +111,8 @@ int fermat(mpz_t N, mpz_t factors[], int num_factors) {
     } else {
         mpz_set_ui(limit, 20000);
     }
+    */
+    mpz_set_ui(limit,3000000);
     //gmp_printf("N is %Zd, limit is %Zd\n", N, limit);
 
     while(mpz_cmp(count, limit)<0) {
