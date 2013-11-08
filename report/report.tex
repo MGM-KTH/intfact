@@ -153,9 +153,12 @@ Note that the pseudocode does not take into account the case where $d = N$. If $
 \hspace{0pt}\\\\
 
 
+\subsubsection{Brent's Factorization Method}
+% Förslag till ändring från nedanstående utkommenterade mening
+Brent's method is built upon Pollard's rho algorithm. It improves detection of periodicity in the pseudo-random sequence. \cite{brent}
+%Some improvements were made by Richard Brent and Pollard. 
 
-Some improvements were made by Richard Brent and Pollard. \cite{brent}
-These improvements mostly center around the fact that multiplying consecutive differences $x_{2i}-x_i$ preserves any divisor $d$ of $N$.
+This improvement mostly center around the fact that multiplying consecutive differences $x_{2i}-x_i$ preserves any divisor $d$ of $N$.
 % Nånting om cykler
 Therefore the computation of a greatest common divisor, which is expensive, can be performed a lot less.
 This can however introduce problems if the product $q$ grows to $q = 0 \bmod N$, since we then get the result $d=N$.
