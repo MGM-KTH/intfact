@@ -98,9 +98,12 @@
 \section{Introduction}
 
 \subsection{Problem}
-A prime number is a positive integer greater than 1 that has no positive integer divisors other 1 and itself. The prime factorization of a positive integer is a list of primes that divides the integer, and their multiplicities. The problem of finding these prime factors is called integer factorization.
+A prime number is a positive integer greater than 1 that has no positive integer divisors other 1 and itself.
+The prime factorization of a positive integer is a list of primes that divides the integer, and their multiplicities.
+The problem of finding these prime factors is called integer factorization.
 
-The fundamental theorem of arithmetic states that every positive integer (> 1) is either prime or a unique product of prime numbers. In other words, all natural numbers can be factorized.
+The fundamental theorem of arithmetic states that every positive integer (> 1) is either prime or a unique product of prime numbers.
+In other words, all natural numbers can be factorized.
 
 The purpose of this project is to study and implement factorization algorithms in order to successfully factorize a set of composite numbers, most of which are non-trivial.
 
@@ -112,25 +115,40 @@ The purpose of this project is to study and implement factorization algorithms i
 \section{Method}
 \subsection{Algorithms}
 \subsubsection{Pollard's rho algorithm}
-The first algorithm used was Pollard's rho algorithm\cite{pollard}. It is a probabilistic algorithm that tries to find one factor of a composite number. The algorithm is then executed multiple times until the number is completely factorized, or until it fails.
+The first algorithm used was Pollard's rho algorithm\cite{pollard}.
+It is a probabilistic algorithm that tries to find one factor of a composite number.
+The algorithm is then executed multiple times until the number is completely factorized, or until it fails.
 
 The idea behind the algorithm is that we can improve the odds of guessing a factor of a composite number $N$.
 The phenomenon is known as the \emph{birthday problem} or \emph{birthday paradox}\cite{birthday}.
+% Borde ha nån sorts liknelse som gör det tydligt hur det faktiskt relaterar till birthday om vi ska nämna det
 
 In Pollard's rho algorithm the odds are improved as follows:
 
-Suppose that we want to guess a factor $d$ of $N$. We know that at least one factor is less than $\sqrt{N}$, so we can safely say that we have a $\frac{1}{\sqrt{N}}$ chance of guessing $d$. If we instead pick two random numbers $i$ and $j$ and calculate their difference, what are the odds of that difference being a factor of $N$? There are about $2\sqrt{N}$ different combinations of $i$ and $j$ that has the property $i - j = d$, and there are $\sqrt{N}\sqrt{N} = N$ possible values of $i$ and $j$. The new probability of guessing $d$ is therefore approximately $\frac{2\sqrt{N}}{N} = \frac{2}{\sqrt{N}}$. The probability of guessing $d$ is doubled. \cite{colorado}
+Suppose that we want to guess a factor $d$ of $N$.
+We know that at least one factor is less than $\sqrt{N}$, so we can safely say that we have a $\frac{1}{\sqrt{N}}$ chance of guessing $d$.
+If we instead pick two random numbers $i$ and $j$ and calculate their difference, what are the odds of that difference being a factor of $N$? There are about $2\sqrt{N}$ different combinations of $i$ and $j$ that has the property $i - j = d$, and there are $\sqrt{N}\sqrt{N} = N$ possible values of $i$ and $j$.
+The new probability of guessing $d$ is therefore approximately $\frac{2\sqrt{N}}{N} = \frac{2}{\sqrt{N}}$.
+The probability of guessing $d$ is doubled.\cite{colorado}
 
-We extend this idea by picking $k$ random numbers and check if the difference of any two of these numbers equal a factor of $N$. The birthday paradox states that the probability of guessing a factor increases rapidly with $k$. For example, the probability of any two people sharing a birthday in a room of 23 people is 50\%, assuming all birthdays are equally probable. For 57 people, the probability is 99\%.
+We extend this idea by picking $k$ random numbers and check if the difference of any two of these numbers equal a factor of $N$.
+The birthday paradox states that the probability of guessing a factor increases rapidly with $k$.
+For example, the probability of any two people sharing a birthday in a room of 23 people is 50\%, assuming all birthdays are equally probable.
+For 57 people, the probability is 99\%.
 
 This is exactly what Pollard's rho algorithm makes use of by using a pseudo-random generator to generate numbers.
 
 It uses two increasing values modulo $N$ to generate numbers with which to find the greatest common divisor for $N$.
 The method uses the sequence $x_{i+1} = x^2 + 1 \bmod N$, where $i > 0$, to generate two values, $x_i$ and $x_{2i}$.
-The algorithm then runs $gcd(\abs{x_{2i}-x_i})$. If the result is greater than 1, the result is a non-trivial factor of $N$. See pseudocode below.  %The reason for calculating the $i^{\text{\tiny{ith}}}$ and $2i^{\text{\tiny{ith}}}$ numbers is that ... Pollard said so. (har källa på det iofs...inte från Pollard själv iofs...)
+The algorithm then runs $gcd(\abs{x_{2i}-x_i})$.
+If the result is greater than 1, the result is a non-trivial factor of $N$.
+See pseudocode below.
+%The reason for calculating the $i^{\text{\tiny{ith}}}$ and $2i^{\text{\tiny{ith}}}$ numbers is that ... Pollard said so. (har källa på det iofs...inte från Pollard själv iofs...)
 
 
-Note that the pseudocode does not take into account the case where $d = N$. If $d = N$, the algorithm has failed to find a factor. The pseudo-random generator $f(x)$ is defined as: $x^2+C\, (mod\, N)$, where $C$ is an arbitrary constant which maintains the property\\ $x = y\, (mod\; p) \rightarrow f(x) = f(y)\,(mod\; p)$.\\ Pollard suggested $C = 1$, but there are many other polynomials that satisfy this requirement.\\ % Source? Än så länge wikipedia.
+Note that the pseudocode does not take into account the case where $d = N$.
+If $d = N$, the algorithm has failed to find a factor.
+The pseudo-random generator $f(x)$ is defined as: $x^2+C\, (mod\, N)$, where $C$ is an arbitrary constant which maintains the property\\ $x = y\, (mod\; p) \rightarrow f(x) = f(y)\,(mod\; p)$.\\ Pollard suggested $C = 1$, but there are many other polynomials that satisfy this requirement.\\ % Source? Än så länge wikipedia.
 
 
 \begin{algorithm}[H]
@@ -155,8 +173,10 @@ Note that the pseudocode does not take into account the case where $d = N$. If $
 
 \subsubsection{Brent's Factorization Method}
 % Förslag till ändring från nedanstående utkommenterade mening
-Brent's method is built upon Pollard's rho algorithm. It improves detection of periodicity in the pseudo-random sequence. \cite{brent}
-%Some improvements were made by Richard Brent and Pollard. 
+Brent's method is built upon Pollard's rho algorithm.
+It improves detection of periodicity in the pseudo-random sequence. \cite{brent}
+%Some improvements were made by Richard Brent and Pollard.
+
 
 This improvement mostly center around the fact that multiplying consecutive differences $x_{2i}-x_i$ preserves any divisor $d$ of $N$.
 % Nånting om cykler
@@ -193,11 +213,13 @@ A static list of the first 10 000 primes was used to weed out trivial primes wit
 When using PR only the first 500-2000 primes were used for the trial division.
 
 In practice, the $while$-loop runs a fixed number of times since the program has a deadline to keep.
-Another paper that describes several algorithms, including the Brent improvements (not the version we're using, this one gave $\sim$57 in Kattis. A lot simpler though.)\cite{otherpaper} % Vad säger vi med den här meningen???
+Another paper that describes several algorithms, including the Brent improvements (not the version we're using, this one gave $\sim$57 in Kattis.
+A lot simpler though.)\cite{otherpaper} % Vad säger vi med den här meningen???
 
 The factorization program was written in |C| and uses the library GMP\cite{gmp} to represent large numbers, perform functions such as primality testing and GCD.
 
-Before each iteration of PR, primality testing is performed. This is done using GMP's built-in function |mpz_probab_prime| which uses trial division and Miller-Rabin probabilistic primality tests internally.\cite{probabprime}
+Before each iteration of PR, primality testing is performed.
+This is done using GMP's built-in function |mpz_probab_prime| which uses trial division and Miller-Rabin probabilistic primality tests internally.\cite{probabprime}
 
 %Massa om hur vi implementerade koden
 
@@ -222,9 +244,18 @@ The table below shows you how many of the 100 KATTIS numbers that the different 
     submission ID for the best submission (86 pts): |453799|
 
 Pollard's rho algorithm got results between 57 and 73, and Brent's factorization method got results between 73 and 86.
-In order to avoid going over the time limit of 15 seconds we had to skip numbers above a certain size. Pollard's rho got its best results when we skipped numbers greater than 86 bits. Since Brent's method is faster, we were able to include numbers up to 95 bits without reaching the time limit. 
+In order to avoid going over the time limit of 15 seconds we had to skip numbers above a certain size.
+Pollard's rho got its best results when we skipped numbers greater than 86 bits.
+Since Brent's method is faster, we were able to include numbers up to 95 bits without reaching the time limit.
 
-We also had to set a limit on the number of iterations. This was done using trial-and-error since the number of iterations necessary depends on the numbers to be factored. These iteration limits turned out to be slightly arbitrary once above a certain threshold, which seems to indicate that most if not all numbers were successfully factored. However, one slight modification was made in Brent's method. The number of iterations performed for numbers greater than 90 bits in size were a lot lower than the default limit. This lower limit was set to about 5000, instead of the default of about 100 000. This was necessary in order to finish on time. This can be explained by the fact that bigger numbers are more likely to require more iterations, which makes the program waste time by performing many iterations on numbers it will fail to factorize.
+We also had to set a limit on the number of iterations.
+This was done using trial-and-error since the number of iterations necessary depends on the numbers to be factored.
+These iteration limits turned out to be slightly arbitrary once above a certain threshold, which seems to indicate that most if not all numbers were successfully factored.
+However, one slight modification was made in Brent's method.
+The number of iterations performed for numbers greater than 90 bits in size were a lot lower than the default limit.
+This lower limit was set to about 5000, instead of the default of about 100 000.
+This was necessary in order to finish on time.
+This can be explained by the fact that bigger numbers are more likely to require more iterations, which makes the program waste time by performing many iterations on numbers it will fail to factorize.
 
 
 \subsection{Discussion}
@@ -233,11 +264,13 @@ Given more time, what could have been improved?\\
 Something about PR vs BFM?\\
 
 % Skriv om plz...
-All of the end-results were expected. The table in the results section contains no surprises.
+All of the end-results were expected.
+The table in the results section contains no surprises.
 Brent's method got the same score as regular Pollard's rho given the same limit on the size of the numbers, but ran faster and could therefore try more, bigger, numbers, just as expected.
 
 
-Given more time, we would have tried to implement the Quadratic Sieve. We know that it is better than Pollard's rho algorithm, and it seemed to be the next logical step. 
+Given more time, we would have tried to implement the Quadratic Sieve.
+We know that it is better than Pollard's rho algorithm, and it seemed to be the next logical step.
 
 
 
