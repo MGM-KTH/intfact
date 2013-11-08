@@ -112,18 +112,16 @@ The purpose of this project is to study and implement factorization algorithms i
 \section{Method}
 \subsection{Algorithms}
 \subsubsection{Pollard's Rho}
-The first algorithm used was Pollard's rho algorithm (PR).
-
 Pollard's rho algorithm (PR) \cite{pollard} uses two increasing values modulo $N$ to generate numbers with which to find the greatest common divisor for $N$.
 The method uses the sequence $x_{i+1} = x^2 + 1 \bmod N$, where $i > 0$, to generate two values, $x_i$ and $x_{2i}$.
-The algorithm then runs $gcd(\abs{x_{2i}-x_i})$. If the result is greater than 1, the result is a non-trivial factor of $N$.
+The algorithm then runs $gcd(\abs{x_{2i}-x_i}, N)$. If the result is greater than 1, the result is a non-trivial factor of $N$.
 \\
 
 This is better than arbitrarily testing random numbers modulo $N$.
 First, since if $N$ is composite, at least one divisor $d$ has to be less than or equal to $\sqrt{N}$.
 %blablablabla står en del i citerade man kanske kan nämna\cite{csh}. Mm och nånting om pseudo-random med sekvensen och varför det funkar.
 
-Some improvements were made by Richard Brent and Pollard.\cite{brent}
+Some improvements were later made to the algorithm by Richard Brent and John Pollard.\cite{brent}
 These improvements mostly center around the fact that multiplying consecutive differences $x_{2i}-x_i$ preserves any divisor $d$ of $N$.
 % Nånting om cykler
 Therefore the computation of a greatest common divisor, which is expensive, can be performed a lot less often.
@@ -148,7 +146,7 @@ In the pseudocode below, the pseudo-random generator $f(x)$ is defined as: $x^2+
    return d\;
    }
  }
- \caption{Pseudocode for Pollard's rho algorithm}
+ \caption{Pseudocode for Pollard's rho algorithm, without improvements}
 \end{algorithm}
 
 \hspace{0pt}\\\\
@@ -176,14 +174,18 @@ Different values of $a$ are tried, searching for an $a$ such that the expression
 The quadratic sieve (QS) \cite{qsieve}
 
 \subsection{Implementation}
-A static list of the first 10 000 primes was used to weed out trivial primes with trial division. When using PR only the first 500-2000 primes are used.
-\\
+Due to apparent popularity and percieved efficiency of the algorithm, the Pollard's Rho algorithm was chosen for the first implementation.
+A static list of the first 10 000 primes was used to weed out trivial primes with trial division, since a composite often contain low primes.
+When using PR only the first 500-2000 primes were used for the trial division.
+
 In practice, the $while$-loop runs a finite number of times, since Pollard's rho algorithm can fail to find factors, and since the program has a deadline to keep.
-Another paper that describes several algorithms, including Brent (not the version we're using, this one gave $\sim$57 in Kattis. A lot simpler though.)\cite{otherpaper}
+Another paper that describes several algorithms, including the Brent improvements (not the version we're using, this one gave $\sim$57 in Kattis. A lot simpler though.)\cite{otherpaper} % Vad säger vi med den här meningen???
 
 The factorization program was written in |C| and uses the library GMP\cite{gmp} to represent large numbers, perform functions such as primality testing and GCD.
 
 Before each iteration of PR, primality testing is performed. This is done using GMP's built-in function |mpz_probab_prime| which uses trial division and Miller-Rabin probabilistic primality tests internally.\cite{probabprime}
+
+%Massa om hur vi implementerade koden
 
 %-------------------------------------------------------------------------------
 %   SECTION 3
