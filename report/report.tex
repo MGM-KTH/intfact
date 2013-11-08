@@ -257,6 +257,11 @@ This lower limit was set to about 5000, instead of the default of about 100 000.
 This was necessary in order to finish on time.
 This can be explained by the fact that bigger numbers are more likely to require more iterations, which makes the program waste time by performing many iterations on numbers it will fail to factorize.
 
+% Removing the backup-iteration when d == N in Brent only improved time. 
+% It never gave any extra factors.
+% + Something about default iterations maxing out at 30k instead of about 100k for most numbers.
+% And maybe mention starting values, "m", "C" etc.
+
 
 \subsection{Discussion}
 Were the results expected? Why?\\
