@@ -112,54 +112,23 @@ The fundamental theorem of arithmetic states that every positive integer (> 1) i
 \subsubsection{Pollard's Rho}
 The first algorithm used was Pollard's rho algorithm (PR).
 
-Pollard's rho algorithm (PR) \cite{pollard} uses two increasing values modulo $N$ to generate numbers with which to find the greatest common divisor with $N$.
-The method uses the sequence $x_{i+1} = x^2 + 1 \bmod N$, where $i>0$, to generate two values, $x_i$ and $x_{2i}$.
-The difference is taken and a check for a common divisor with $N$ larger than one is performed.
+Pollard's rho algorithm (PR) \cite{pollard} uses two increasing values modulo $N$ to generate numbers with which to find the greatest common divisor for $N$.
+The method uses the sequence $x_{i+1} = x^2 + 1 \bmod N$, where $i > 0$, to generate two values, $x_i$ and $x_{2i}$.
+The algorithm then runs $gcd(\abs{x_{2i}-x_i})$. If the result is greater than 1, the result is a non-trivial factor of $N$.
 \\
 
 This is better than arbitrarily testing random numbers modulo $N$.
-Firstly since if $N$ is composite, at least one divisor $d$ has to be less than or equal to $\sqrt{N}$.
-blablablabla står en del i citerade man kanske kan nämna\cite{csh}
+First, since if $N$ is composite, at least one divisor $d$ has to be less than or equal to $\sqrt{N}$.
+blablablabla står en del i citerade man kanske kan nämna\cite{csh}. Mm och nånting om pseudo-random med sekvensen och varför det funkar.
 
-Some improvements where made to the algorithm by Richard Brent and Pollard.\cite{brent}
+Some improvements were made by Richard Brent and Pollard.\cite{brent}
 These improvements mostly center around the fact that multiplying consecutive differences $x_{2i}-x_i$ preserves any divisor $d$ of $N$.
-Therefore the computation of a greatest common divisor, which is expensive, can be performed a lot less.
-This can however introduce problems if the product $q$ grows to $q = 0 \bmod N$, which leads to finding the factor $d=N$.
-However, this can be countered by not multiplying too many times, and to backtrack to the last $x_i$ and $x_{2i}$ and performing the regular pollard rho procedure if a factor $d=N$ is discovered.
-
-\subsubsection{Fermats Factorization Method}
-Fermat's factorization method (FFM) \cite{fermat} is based on the ability to represent an odd integer as the difference of two squares $N = a^2 - b^2$.
-Different values of $a$ are tried, hoping that the expression $a^2 - N$, which is equivalent to $b^2$, produces a square.
-
-\begin{algorithm}[H]
- \SetAlgoLined % For previous releases [?]
- \textbf{Input:} {A composite number N}\\
- \textbf{Output:} {A non-trivial factor of N}\\
- $a := ceil(sqrt(N))$\\
- $b2 := a*a - N$\\
- \While{b2 isn't a square}{
-  $a := a+1$\;
-  $b2 := a*a - N$\;
-  }
-  return $a-sqrt(b2)$\;
- \caption{Pseudocode for Fermats Factorization Method taken from wikipedia}
-\end{algorithm}
-
-\subsubsection{Quadratic Sieve}
-The quadratic sieve (QS) \cite{qsieve}
-
-\subsection{Implementation}
-A static list of the first 10 000 primes was used to weed out trivial primes with trial division. When using PR only the first 500-2000 primes are used.
-\\
-In practice, the $while$-loop runs a finite number of times, since Pollard's rho algorithm can fail to find factors, and since the program has a deadline to keep.
-Another paper that describes several algorithms, including Brent (not the version we're using, this one gave $\sim$57 in Kattis. A lot simpler though.)\cite{otherpaper}
-
-The factorization program was written in |C| and uses the library GMP\cite{gmp} to represent large numbers, perform functions such as primality testing and GCD.
-
-Before each iteration of PR, primality testing is performed. This is done using GMP's built-in function |mpz_probab_prime| which uses trial division and Miller-Rabin probabilistic primality tests internally.\cite{probabprime}
+Therefore the computation of a greatest common divisor, which is expensive, can be performed a lot less often.
+This can however introduce problems if the product $q$ grows to $q = 0 \bmod N$, since we then get the result $d=N$.
+However, this can be countered by not multiplying too many times, and by backtracking to the last $x_i$ and $x_{2i}$ and performing the regular pollard rho procedure if $d=N$.
 
 
-In the pseudocode below, the pseudo-random generator $f(x)$ is defined as: $x^2+C\, (mod\, N)$, where $C$ is an arbitrary constant which maintains the property $x = y\, (mod\; p) \rightarrow f(x) = f(y)\,(mod\; p)$.\\
+In the pseudocode below, the pseudo-random generator $f(x)$ is defined as: $x^2+C\, (mod\, N)$, where $C$ is an arbitrary constant which maintains the property\\ $x = y\, (mod\; p) \rightarrow f(x) = f(y)\,(mod\; p)$.\\
 
 \begin{algorithm}[H]
  \SetAlgoLined % For previous releases [?]
@@ -180,6 +149,39 @@ In the pseudocode below, the pseudo-random generator $f(x)$ is defined as: $x^2+
 \end{algorithm}
 
 \hspace{0pt}\\\\
+
+\subsubsection{Fermats Factorization Method}
+Fermat's factorization method (FFM) \cite{fermat} is based on the ability to represent an odd integer as the difference of two squares $N = a^2 - b^2$.
+Different values of $a$ are tried, searching for an $a$ such that the expression $a^2 - N$, which is equivalent to $b^2$, produces a square.
+
+\begin{algorithm}[H]
+ \SetAlgoLined % For previous releases [?]
+ \textbf{Input:} {A composite number N}\\
+ \textbf{Output:} {A non-trivial factor of N}\\
+ $a := ceil(sqrt(N))$\\
+ $b2 := a*a - N$\\
+ \While{b2 isn't a square}{
+  $a := a+1$\;
+  $b2 := a*a - N$\;
+  }
+  return $a-sqrt(b2)$\;
+  \hspace{0pt}\\
+  \caption{Pseudocode for Fermats Factorization Method taken from wikipedia}
+\end{algorithm}
+
+\subsubsection{Quadratic Sieve}
+The quadratic sieve (QS) \cite{qsieve}
+
+\subsection{Implementation}
+A static list of the first 10 000 primes was used to weed out trivial primes with trial division. When using PR only the first 500-2000 primes are used.
+\\
+In practice, the $while$-loop runs a finite number of times, since Pollard's rho algorithm can fail to find factors, and since the program has a deadline to keep.
+Another paper that describes several algorithms, including Brent (not the version we're using, this one gave $\sim$57 in Kattis. A lot simpler though.)\cite{otherpaper}
+
+The factorization program was written in |C| and uses the library GMP\cite{gmp} to represent large numbers, perform functions such as primality testing and GCD.
+
+Before each iteration of PR, primality testing is performed. This is done using GMP's built-in function |mpz_probab_prime| which uses trial division and Miller-Rabin probabilistic primality tests internally.\cite{probabprime}
+
 %-------------------------------------------------------------------------------
 %   SECTION 3
 %-------------------------------------------------------------------------------
@@ -197,7 +199,7 @@ In the pseudocode below, the pseudo-random generator $f(x)$ is defined as: $x^2+
     \end{tabular}
     \hspace{10pt}
 
-    submission ID for the best submission (86 pts): |451399|
+    submission ID for the best submission (86 pts): |453518|
 
 
 \subsection{Discussion}
