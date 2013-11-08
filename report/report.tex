@@ -121,10 +121,11 @@ The algorithm then runs $gcd(\abs{x_{2i}-x_i})$. If the result is greater than 1
 
 This is better than arbitrarily testing random numbers modulo $N$.
 First, since if $N$ is composite, at least one divisor $d$ has to be less than or equal to $\sqrt{N}$.
-blablablabla står en del i citerade man kanske kan nämna\cite{csh}. Mm och nånting om pseudo-random med sekvensen och varför det funkar.
+%blablablabla står en del i citerade man kanske kan nämna\cite{csh}. Mm och nånting om pseudo-random med sekvensen och varför det funkar.
 
 Some improvements were made by Richard Brent and Pollard.\cite{brent}
 These improvements mostly center around the fact that multiplying consecutive differences $x_{2i}-x_i$ preserves any divisor $d$ of $N$.
+% Nånting om cykler
 Therefore the computation of a greatest common divisor, which is expensive, can be performed a lot less often.
 This can however introduce problems if the product $q$ grows to $q = 0 \bmod N$, since we then get the result $d=N$.
 However, this can be countered by not multiplying too many times, and by backtracking to the last $x_i$ and $x_{2i}$ and performing the regular pollard rho procedure if $d=N$.
