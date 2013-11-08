@@ -188,6 +188,7 @@ Before each iteration of PR, primality testing is performed. This is done using 
 
 \section{Results}
 
+The table below shows you how many of the 100 KATTIS numbers that the different algorithms were able to factorize.
 
     \begin{tabular}{|c|c|c|c|c|}
     \hline
@@ -199,7 +200,14 @@ Before each iteration of PR, primality testing is performed. This is done using 
     \end{tabular}
     \hspace{10pt}
 
-    submission ID for the best submission (86 pts): |453518|
+    submission ID for the best submission (86 pts): |453799|
+
+Pollard's rho algorithm got results between 57 and 73, and Brent's factorization method got results between 73 and 86.
+In order to avoid going over the time limit of 15 seconds we had to skip numbers above a certain size. Pollard's rho got its best results when we skipped numbers greater than 86 bits. Since Brent's method is faster, we were able to include numbers up to 95 bits without reaching the time limit. 
+
+We also had to set a limit on the number of iterations. This was done using trial-and-error since the number of iterations necessary depends on the numbers to be factored. These iteration limits turned out to be slightly arbitrary once above a certain threshold, which seems to indicate that most if not all numbers were successfully factored. However, one slight modification was made in Brent's method. The number of iterations performed for numbers greater than 90 bits in size were a lot lower than the default limit. This lower limit was set to about 5000, instead of the default of about 100 000. This can be explained by the fact that bigger numbers are more likely to require more iterations, which makes the program waste time by performing many iterations on numbers it will fail to factorize.
+
+
 
 
 \subsection{Discussion}
