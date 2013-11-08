@@ -111,7 +111,7 @@ The purpose of this project is to study and implement factorization algorithms i
 %-------------------------------------------------------------------------------
 \section{Method}
 \subsection{Algorithms}
-\subsubsection{Pollard's Rho}
+\subsubsection{Pollard's rho algorithm}
 The first algorithm used was Pollard's rho algorithm\cite{pollard}. It is a probabilistic algorithm that tries to find one factor of a composite number. The algorithm is then executed multiple times until the number is completely factorized, or until it fails.
 
 The idea behind the algorithm is that we can improve the odds of guessing a factor of a composite number $N$.
@@ -123,15 +123,15 @@ Suppose that we want to guess a factor $d$ of $N$. We know that at least one fac
 
 We extend this idea by picking $k$ random numbers and check if the difference of any two of these numbers equal a factor of $N$. The birthday paradox states that the probability of guessing a factor increases rapidly with $k$. For example, the probability of any two people sharing a birthday in a room of 23 people is 50\%, assuming all birthdays are equally probable. For 57 people, the probability is 99\%.
 
-This is exactly what Pollard's rho algorithm makes use of by using a pseudo-random generator to generate guesses.
+This is exactly what Pollard's rho algorithm makes use of by using a pseudo-random generator to generate numbers.
 
 It uses two increasing values modulo $N$ to generate numbers with which to find the greatest common divisor for $N$.
 The method uses the sequence $x_{i+1} = x^2 + 1 \bmod N$, where $i > 0$, to generate two values, $x_i$ and $x_{2i}$.
-The algorithm then runs $gcd(\abs{x_{2i}-x_i})$. If the result is greater than 1, the result is a non-trivial factor of $N$. See pseudocode below. 
+The algorithm then runs $gcd(\abs{x_{2i}-x_i})$. If the result is greater than 1, the result is a non-trivial factor of $N$. See pseudocode below.  %The reason for calculating the $i^{\text{\tiny{ith}}}$ and $2i^{\text{\tiny{ith}}}$ numbers is that ... Pollard said so. (har källa på det iofs...inte från Pollard själv iofs...)
 
-Note that the pseudocode does not take into account the case where $d = N$. If $d = N$, the algorithm has failed to find a factor. The pseudo-random generator $f(x)$ is defined as: $x^2+C\, (mod\, N)$, where $C$ is an arbitrary constant which maintains the property\\ $x = y\, (mod\; p) \rightarrow f(x) = f(y)\,(mod\; p)$.\\ Pollard suggested $C = 1$, but there are many other polynomials that satisfy this requirement.\\
 
- %The reason for calculating the $i^{\text{\tiny{ith}}}$ and $2i^{\text{\tiny{ith}}}$ numbers is that ... Pollard said so. (har källa på det iofs...inte från Pollard själv iofs...)
+Note that the pseudocode does not take into account the case where $d = N$. If $d = N$, the algorithm has failed to find a factor. The pseudo-random generator $f(x)$ is defined as: $x^2+C\, (mod\, N)$, where $C$ is an arbitrary constant which maintains the property\\ $x = y\, (mod\; p) \rightarrow f(x) = f(y)\,(mod\; p)$.\\ Pollard suggested $C = 1$, but there are many other polynomials that satisfy this requirement.\\ % Source? Än så länge wikipedia.
+
 
 \begin{algorithm}[H]
  \SetAlgoLined % For previous releases [?]
@@ -152,9 +152,6 @@ Note that the pseudocode does not take into account the case where $d = N$. If $
 \end{algorithm}
 \hspace{0pt}\\\\
 
-%This is better than arbitrarily testing random numbers modulo $N$.
-%First, since if $N$ is composite, at least one divisor $d$ has to be less than or equal to $\sqrt{N}$.
-%blablablabla står en del i citerade man kanske kan nämna\cite{csh}. Mm och nånting om pseudo-random med sekvensen och varför det funkar.
 
 
 Some improvements were made by Richard Brent and Pollard. \cite{brent}
@@ -188,14 +185,18 @@ Different values of $a$ are tried, searching for an $a$ such that the expression
 The quadratic sieve (QS) \cite{qsieve}
 
 \subsection{Implementation}
-A static list of the first 10 000 primes was used to weed out trivial primes with trial division. When using PR only the first 500-2000 primes are used.
-\\
+Due to apparent popularity and percieved efficiency of the algorithm, the Pollard's Rho algorithm was chosen for the first implementation.
+A static list of the first 10 000 primes was used to weed out trivial primes with trial division, since a composite often contain low primes.
+When using PR only the first 500-2000 primes were used for the trial division.
+
 In practice, the $while$-loop runs a finite number of times, since Pollard's rho algorithm can fail to find factors, and since the program has a deadline to keep.
-Another paper that describes several algorithms, including Brent (not the version we're using, this one gave $\sim$57 in Kattis. A lot simpler though.)\cite{otherpaper}
+Another paper that describes several algorithms, including the Brent improvements (not the version we're using, this one gave $\sim$57 in Kattis. A lot simpler though.)\cite{otherpaper} % Vad säger vi med den här meningen???
 
 The factorization program was written in |C| and uses the library GMP\cite{gmp} to represent large numbers, perform functions such as primality testing and GCD.
 
 Before each iteration of PR, primality testing is performed. This is done using GMP's built-in function |mpz_probab_prime| which uses trial division and Miller-Rabin probabilistic primality tests internally.\cite{probabprime}
+
+%Massa om hur vi implementerade koden
 
 %-------------------------------------------------------------------------------
 %   SECTION 3
