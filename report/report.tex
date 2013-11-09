@@ -133,7 +133,7 @@ Subsequently there are $N$ possible values of $x_i$ and $x_j$.
 The new probability of guessing $d$ is therefore approximately $\frac{2\sqrt{N}}{N} = \frac{2}{\sqrt{N}}$.
 The probability of guessing $d$ is doubled.\cite{colorado}
 
-We extend this idea by picking $k$ random numbers and check if the difference of any two of these numbers equal a factor of $N$.
+We use this idea by picking $k$ random numbers and check if the difference of any two of these numbers equal a factor of $N$.
 The birthday paradox states that the probability of guessing a factor increases rapidly with $k$.
 For example, the probability of any two people sharing a birthday in a room of 23 people is 50\%, assuming all birthdays are equally probable.
 For 57 people, the probability is 99\%.
@@ -147,10 +147,10 @@ If the result is greater than 1, the result is a non-trivial factor of $N$.
 See pseudocode below.
 %The reason for calculating the $i^{\text{\tiny{ith}}}$ and $2i^{\text{\tiny{ith}}}$ numbers is that ... Pollard said so. (har källa på det iofs...inte från Pollard själv iofs...)
 
-
 Note that the pseudocode does not take into account the case where $d = N$.
 If $d = N$, the algorithm has failed to find a factor.
-The pseudo-random generator $f(x)$ is defined as: $x^2+C\, (mod\, N)$, where $C$ is an arbitrary constant which maintains the property\\ $x = y\, (mod\; p) \rightarrow f(x) = f(y)\,(mod\; p)$.\\ Pollard suggested $C = 1$, but there are many other polynomials that satisfy this requirement.\\ % Source? Än så länge wikipedia.
+The pseudo-random generator $f(x)$ is defined as: $x^2+C\, (mod\, N)$, where $C$ is an arbitrary constant which maintains the property\\ $x = y\, (mod\; p) \rightarrow f(x) = f(y)\,(mod\; p)$.\\
+Pollard suggested $C = 1$, but there are many other polynomials that satisfy this requirement.\\ % Source? Än så länge wikipedia.
 
 
 \begin{algorithm}[H]
@@ -248,6 +248,8 @@ The quadratic sieve \cite{qsieve} is the fastest known factorization algorithm f
 % oklart om detta är noggrant nog. tänkte börja enkelt innan vi bestämmer oss för att gå djupt.
 Just as Fermat's factorization method it searches for a congruence of squares modulo $N$. However, instead of the naive approach used by Fermat it uses linear algebra to find squares. The basic idea is to study the parity of each of the multiplicities of the prime factors of a number. For example, the number $144$ is a square since its prime factorization is $2^{4}3^2$ and both exponents $4$ and $2$ are even ($144 = 2^2 3^1\times2^2 3^1$).
 
+The algorithm begins with a data gathering phase, where the expression $a^2 \bmod N$ is calculated for several values of $a$.
+Out of these calculated values a subset will produce products that are squares which yields a congruence of squares.
 % Övriga steg påminner om/är exakt som Fermat's? 
 
 \subsection{Implementation}
