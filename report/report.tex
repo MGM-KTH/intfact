@@ -127,7 +127,7 @@ In Pollard's rho algorithm the odds are improved as follows:
 
 Suppose that we want to guess a factor $d$ of $N$.
 We know that at least one factor is less than or equal to $\sqrt{N}$, so we can safely say that we have a $\frac{1}{\sqrt{N}}$ chance of guessing $d$.
-If we instead pick two random numbers $x_i$ and $x_j$ in a sequence $x_1 .. x_k$ and calculate their difference, what are the odds of that difference being a factor of $N$?
+If we pick two random numbers $x_i$ and $x_j$ in a sequence $x_1 .. x_k$ and calculate their difference, what are the odds of that difference being a factor of $N$?
 If we choose values $x_i$ and $x_j$ such that the difference is never greater than $\sqrt{N}$, there are about $2(\sqrt{N})$ (actually $2(\sqrt{N}-d)$) different combinations of $x_i$ and $x_j$ that has the property $x_i - x_j = d$.
 Subsequently there are $N$ possible values of $x_i$ and $x_j$.
 The new probability of guessing $d$ is therefore approximately $\frac{2\sqrt{N}}{N} = \frac{2}{\sqrt{N}}$.
