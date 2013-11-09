@@ -127,14 +127,18 @@ In Pollard's rho algorithm the odds are improved as follows:
 
 Suppose that we want to guess a factor $d$ of $N$.
 We know that at least one factor is less than or equal to $\sqrt{N}$, so we can safely say that we have a $\frac{1}{\sqrt{N}}$ chance of guessing $d$.
-%  OBS: Vi måste förklara eller inte nämna sekvensen. 
+% Förvirringen ligger i att inte blanda ihop val av två slumpade med koll om den sökta diffen ens finns inom sekvensen.
+% Annan pdf som går igenom sambandet mellan birthday och pollards:
+% http://www.mpi-inf.mpg.de/~csaha/lectures/lec18.pdf 
+% Röstar för den här genomgångsordningen: birthday -> sekvens -> floyd's cycle detection trick -> pollard's
+% pdfen ovan gör ungefär så, fast sekvens innan birthday. Gillar det.
 If we pick two random numbers $x_i$ and $x_j$ in a sequence $x_1 .. x_k$ and calculate their difference, what are the odds of that difference being a factor of $N$?
 % skrev om meningen under till <= sqrt.
-If we choose values $x_i, x_j \leq \sqrt{N}$, there are  $2(\sqrt{N}-d)$ different combinations of $x_i$ and $x_j$ that has the property $x_i - x_j = d$.
+If we choose values $x_i, x_j \leq \sqrt{N}$, there are $2(\sqrt{N}-d)$ different combinations of $x_i$ and $x_j$ that has the property $\abs{x_i - x_j} = d$.
 Subsequently, there are $N$ total combinations of $x_i$ and $x_j$.
 The new probability of guessing $d$ is therefore $\frac{2(\sqrt{N}-d)}{N}$. 
 % Insert finishing sentence below. The above probability is higher than the one for 1/sqrt when d < sqrt/2.
-% In other words, picking two random numbers <= sqrt is better when d is < sqrt/2
+% In other words, picking two random numbers is better when d < sqrt/2
 % Om jag tänker rätt så är det svaret för två random, men för en sekvens av k förbättras det, så om vi förklarar
 % sekvensanvändningen ovan borde vi kunna visa att det alltid är bättre i pollard.
 
@@ -146,20 +150,21 @@ The birthday paradox states that the probability of guessing a factor increases 
 For example, the probability of any two people sharing a birthday in a room of 23 people is 50\%, assuming all birthdays are equally probable.
 For 57 people, the probability is 99\%.
 
-This is exactly what Pollard's rho algorithm makes use of by using a pseudo-random generator to generate numbers.
+This is exactly what Pollard's rho algorithm makes use of by using a pseudo-random generator to generate a sequence.
 
-It uses two increasing values modulo $N$ to generate numbers with which to find the greatest common divisor for $N$.
-The method uses the sequence $x_{i+1} = x^2 + 1 \bmod N$, where $i > 0$, to generate two values, $x_i$ and $x_{2i}$.
-The algorithm then runs $gcd(\abs{x_{2i}-x_i})$.
-If the result is greater than 1, the result is a non-trivial factor of $N$.
-See pseudocode below.
-%The reason for calculating the $i^{\text{\tiny{ith}}}$ and $2i^{\text{\tiny{ith}}}$ numbers is that ... Pollard said so. (har källa på det iofs...inte från Pollard själv iofs...)
+% Man kan skriva vilken generator som används och flytta övriga delen till diskussion om man vill.
+% Tyckte att det var okej att ta upp här dock. Men, fundera på saken.
+The pseudo-random sequence generator used by Pollard is $x^2 + 1 \bmod N$. The reasons for using this specific function are that it is easy to implement, and works well in practice \cite{algnotes}. There are, however, alternatives. For example, Brent suggested that we use $x^2 +3$ with his modified Pollard's rho algorithm (see below). This was also proven heuristically. \cite{brent}
+
+In order to reduce memory usage when iterating over the sequence, Floyd's cycle-finding algorithm (also known as the ''tortoise and the hare'' algorithm) is used to only keep two pointers to values in the sequence.
+According to this algorithm, the only two values that we need to keep track of are the ones at index $i$ and $2i$.\cite{floyd}
+
+Pollard's rho algorithm therefore repeatedly calculates two values $x_i$ and $x_2i$ from the sequence and calculates $gcd(\abs{x_{2i}-x_i})$.
+If the result is greater than 1 (and not $N$ itself), the result is a non-trivial factor of $N$.
+See the pseudocode for Pollard's rho algorithm below.
 
 Note that the pseudocode does not take into account the case where $d = N$.
 If $d = N$, the algorithm has failed to find a factor.
-The pseudo-random generator $f(x)$ is defined as: $x^2+C\, (mod\, N)$, where $C$ is an arbitrary constant which maintains the property\\ $x = y\, (mod\; p) \rightarrow f(x) = f(y)\,(mod\; p)$.\\
-Pollard suggested $C = 1$, but there are many other polynomials that satisfy this requirement.\\ % Source? Än så länge wikipedia.
-
 
 \begin{algorithm}[H]
  \SetAlgoLined % For previous releases [?]
@@ -184,8 +189,7 @@ Pollard suggested $C = 1$, but there are many other polynomials that satisfy thi
 \subsubsection{Brent's Factorization Method}
 % Förslag till ändring från nedanstående utkommenterade mening
 Brent's method is built upon Pollard's rho algorithm.
-It improves detection of periodicity in the pseudo-random sequence. \cite{brent}
-%Some improvements were made by Richard Brent and Pollard.
+It improves detection of periodicity in the pseudo-random sequence by replacing Floyd's cycle-finding algorithm with a similar method called Brent's cycle-finding.\cite{brent}
 
 This improvement mostly center around the fact that multiplying consecutive differences $x_{2i}-x_i$ preserves any divisor $d$ of $N$.
 % Nånting om cykler
@@ -342,6 +346,7 @@ We know that it is better than Pollard's rho algorithm, and it seemed to be the 
 \bibitem{pollard} \begin{flushleft} Pollard's rho algorithm - \url{http://en.wikipedia.org/wiki/Pollard's_rho_algorithm} <insert date here!> \end{flushleft}
 \bibitem{birthday}Mosteller, Frederick. \emph{''Understanding the birthday problem.''} Selected Papers of Frederick Mosteller. Springer New York, p 349-353 (2006).
 \bibitem{colorado} A Quick Tutorial on Pollard's Rho Algorithm - \url{http://www.cs.colorado.edu/~srirams/classes/doku.php/pollard_rho_tutorial}
+\bibitem{floyd} Floyd's cycle-finding algorithm - \url{http://en.wikipedia.org/wiki/Cycle_detection#Tortoise_and_hare}
 \bibitem{brent} Brent, Richard P. \emph{''An improved Monte Carlo factorization algorithm.''} BIT Numerical Mathematics 20.2 (1980).
 \bibitem{fermat} Fermat's factorization method - \url{http://en.wikipedia.org/wiki/Fermat's_factorization_method} <insert date here!>
 \bibitem{qsieve} Quadratic sieve - \url{http://en.wikipedia.org/wiki/Quadratic_sieve} <insert date here!>
