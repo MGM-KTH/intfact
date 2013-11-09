@@ -156,8 +156,8 @@ The pseudo-random generator $f(x)$ is defined as: $x^2+C\, (mod\, N)$, where $C$
  \textbf{Input:} {A composite number N}\\
  \textbf{Output:} {A non-trivial factor of N}\\
  let $x_0 \in_U \mathbb{Z}_N$\\
- $x := x_0$\\
- $y := x_0$\\
+ $x := x_0$\;
+ $y := x_0$\;
  \While{True}{
   $x := f(x)$\;
   $y := f(f(y))$\;
@@ -183,6 +183,41 @@ This improvement mostly center around the fact that multiplying consecutive diff
 Therefore the computation of a greatest common divisor, which is expensive, can be performed a lot less.
 This can however introduce problems if the product $q$ grows to $q = 0 \bmod N$, since we then get the result $d=N$.
 However, this can be countered by not multiplying too many times, and by backtracking to the last $x_i$ and $x_{2i}$ and performing the regular pollard rho procedure if $d=N$.
+
+\begin{algorithm}[H]
+ \SetAlgoLined % For previous releases [?]
+ \textbf{Input:} {A composite number N}\\
+ \textbf{Output:} {A non-trivial factor of N}\\
+ $y := 2$\tcp*[l]{Arbitrary start value}
+ $r := 1$\;
+ $q := 1$\;
+ \Repeat{d > 1} {
+   $x := y$\;
+   \For{i := 1 to r}{
+   $y := f(y)$\;
+   }
+   $k := 0$\;
+   \Repeat{ $k \geq r$ or d > 1 }{
+      $ys := y$\;
+      \For{i := 1 to min(m, r--k)}{
+        $y := f(y)$\;
+        $q := q\times\abs{x-y} \bmod N$
+      }
+      $d := gcd(q, N)$\;
+      $k := k + m$\;
+   }
+   $r := r\times2$\;
+ }
+ \If(\tcp*[h]{try previous y}){G = N}{
+    \Repeat{G > 1}{
+      $ys := f(ys)$\;
+      $d = gcd(\abs{x-ys},N)$\;
+    }
+ }
+ \caption{Brent's factorization method}
+\end{algorithm}
+\hspace{0pt}\\\\
+
 
 
 \subsubsection{Fermats Factorization Method}
@@ -256,9 +291,11 @@ We also had to set a limit on the number of iterations.
 This was done using trial-and-error since the number of iterations necessary depends on the numbers to be factored.
 These iteration limits turned out to be slightly arbitrary once above a certain threshold, which seems to indicate that most if not all numbers were successfully factored.
 However, one slight modification was made in Brent's method.
-The number of iterations performed for numbers greater than 90 bits in size were set a lot lower than the default limit. This was necessary in order to finish on time. This can be explained by the fact that bigger numbers are more likely to require more iterations, which makes the program waste time by performing many iterations on numbers it will eventually fail to factorize.
+The number of iterations performed for numbers greater than 90 bits in size were set a lot lower than the default limit. This was necessary in order to finish on time. 
+This can be explained by the fact that we fail to factorize many of these bigger numbers, 
+and even if we succeed they could require many iterations.
 
-After reaching 86 points we noted that the backup loop used by Brent's method when the first loop results in $d = N$ never found any factors. With this loop removed we achieved the same result faster.
+After reaching 86 points we noted that the backtrack loop used by Brent's method, when the first loop results in $d = N,$ never found any factors. With this loop removed we achieved the same result faster.
 
 % Removing the backup-iteration when d == N in Brent only improved time. 
 % It never gave any extra factors.
