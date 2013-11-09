@@ -127,12 +127,20 @@ In Pollard's rho algorithm the odds are improved as follows:
 
 Suppose that we want to guess a factor $d$ of $N$.
 We know that at least one factor is less than or equal to $\sqrt{N}$, so we can safely say that we have a $\frac{1}{\sqrt{N}}$ chance of guessing $d$.
+%  OBS: Vi måste förklara eller inte nämna sekvensen. 
 If we pick two random numbers $x_i$ and $x_j$ in a sequence $x_1 .. x_k$ and calculate their difference, what are the odds of that difference being a factor of $N$?
-If we choose values $x_i$ and $x_j$ such that the difference is never greater than $\sqrt{N}$, there are about $2(\sqrt{N})$ (actually $2(\sqrt{N}-d)$) different combinations of $x_i$ and $x_j$ that has the property $x_i - x_j = d$.
-Subsequently there are $N$ possible values of $x_i$ and $x_j$.
-The new probability of guessing $d$ is therefore approximately $\frac{2\sqrt{N}}{N} = \frac{2}{\sqrt{N}}$.
-The probability of guessing $d$ is doubled.\cite{colorado}
+% skrev om meningen under till <= sqrt.
+If we choose values $x_i, x_j \leq \sqrt{N}$, there are  $2(\sqrt{N}-d)$ different combinations of $x_i$ and $x_j$ that has the property $x_i - x_j = d$.
+Subsequently, there are $N$ total combinations of $x_i$ and $x_j$.
+The new probability of guessing $d$ is therefore $\frac{2(\sqrt{N}-d)}{N}$. 
+% Insert finishing sentence below. The above probability is higher than the one for 1/sqrt when d < sqrt/2.
+% In other words, picking two random numbers <= sqrt is better when d is < sqrt/2
+% Om jag tänker rätt så är det svaret för två random, men för en sekvens av k förbättras det, så om vi förklarar
+% sekvensanvändningen ovan borde vi kunna visa att det alltid är bättre i pollard.
 
+.\cite{colorado}
+
+% Nedanstående måste ändras för att matcha ovanstående.
 We use this idea by picking $k$ random numbers and check if the difference of any two of these numbers equal a factor of $N$.
 The birthday paradox states that the probability of guessing a factor increases rapidly with $k$.
 For example, the probability of any two people sharing a birthday in a room of 23 people is 50\%, assuming all birthdays are equally probable.
