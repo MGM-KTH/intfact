@@ -166,7 +166,7 @@ The pseudo-random generator $f(x)$ is defined as: $x^2+C\, (mod\, N)$, where $C$
    return d\;
    }
  }
- \caption{Pollard's rho algorithm}
+ \caption{Pollard's rho algorithm \cite{algnotes}}
 \end{algorithm}
 \hspace{0pt}\\\\
 
@@ -177,18 +177,19 @@ Brent's method is built upon Pollard's rho algorithm.
 It improves detection of periodicity in the pseudo-random sequence. \cite{brent}
 %Some improvements were made by Richard Brent and Pollard.
 
-
 This improvement mostly center around the fact that multiplying consecutive differences $x_{2i}-x_i$ preserves any divisor $d$ of $N$.
 % Nånting om cykler
 Therefore the computation of a greatest common divisor, which is expensive, can be performed a lot less.
 This can however introduce problems if the product $q$ grows to $q = 0 \bmod N$, since we then get the result $d=N$.
-However, this can be countered by not multiplying too many times, and by backtracking to the last $x_i$ and $x_{2i}$ and performing the regular pollard rho procedure if $d=N$.
+However, this can be countered by not multiplying too many times, and by backtracking to the last $x_i$ and $x_{2i}$ and performing the regular Pollard's rho procedure if $d=N$.
+
+Pseudocode for Brent's factorization method: \\
 
 \begin{algorithm}[H]
  \SetAlgoLined % For previous releases [?]
  \textbf{Input:} {A composite number N}\\
  \textbf{Output:} {A non-trivial factor of N}\\
- $y := 2$\tcp*[l]{Arbitrary start value}
+ $y := 2$\tcp*[l]{arbitrary start value}
  $r := 1$\;
  $q := 1$\;
  \Repeat{d > 1} {
@@ -199,7 +200,7 @@ However, this can be countered by not multiplying too many times, and by backtra
    $k := 0$\;
    \Repeat{ $k \geq r$ or d > 1 }{
       $ys := y$\;
-      \For{i := 1 to min(m, r--k)}{
+      \For(\tcp*[h]{accumulate differences}){i := 1 to min(m, r--k)}{
         $y := f(y)$\;
         $q := q\times\abs{x-y} \bmod N$
       }
@@ -214,13 +215,13 @@ However, this can be countered by not multiplying too many times, and by backtra
       $d = gcd(\abs{x-ys},N)$\;
     }
  }
- \caption{Brent's factorization method}
+ \caption{Brent's factorization method \cite{brent}}
 \end{algorithm}
 \hspace{0pt}\\\\
 
 
 
-\subsubsection{Fermats Factorization Method}
+\subsubsection{Fermat's Factorization Method}
 Fermat's factorization method\cite{fermat} is based on the ability to represent an odd integer as the difference of two squares $N = a^2 - b^2$.
 Different values of $a$ are tried, searching for an $a$ such that the expression $a^2 - N$, which is equivalent to $b^2$, produces a square.
 
@@ -236,14 +237,14 @@ Different values of $a$ are tried, searching for an $a$ such that the expression
   }
   return $a-sqrt(b2)$\;
   \hspace{0pt}\\
-  \caption{Fermat's factorization method}
+  \caption{Fermat's factorization method \cite{fermat}}
 \end{algorithm}
 
 \subsubsection{Quadratic Sieve}
-The quadratic sieve (QS) \cite{qsieve}
+The quadratic sieve \cite{qsieve} is the fastest known factorization algorithm for 
 
 \subsection{Implementation}
-Due to apparent popularity and percieved efficiency of the algorithm, the Pollard's Rho algorithm was chosen for the first implementation.
+Due to apparent popularity and perceived efficiency of the algorithm, the Pollard's Rho algorithm was chosen for the first implementation.
 A static list of the first 10 000 primes was used to weed out trivial primes with trial division, since a composite often contain low primes.
 When using PR only the first 500-2000 primes were used for the trial division.
 
