@@ -186,7 +186,7 @@ However, this can be countered by not multiplying too many times, and by backtra
 
 
 \subsubsection{Fermats Factorization Method}
-Fermat's factorization method (FFM) \cite{fermat} is based on the ability to represent an odd integer as the difference of two squares $N = a^2 - b^2$.
+Fermat's factorization method\cite{fermat} is based on the ability to represent an odd integer as the difference of two squares $N = a^2 - b^2$.
 Different values of $a$ are tried, searching for an $a$ such that the expression $a^2 - N$, which is equivalent to $b^2$, produces a square.
 
 \begin{algorithm}[H]
@@ -201,7 +201,7 @@ Different values of $a$ are tried, searching for an $a$ such that the expression
   }
   return $a-sqrt(b2)$\;
   \hspace{0pt}\\
-  \caption{Pseudocode for Fermats Factorization Method taken from wikipedia}
+  \caption{Fermat's factorization method}
 \end{algorithm}
 
 \subsubsection{Quadratic Sieve}
@@ -216,7 +216,7 @@ In practice, the $while$-loop runs a fixed number of times since the program has
 Another paper that describes several algorithms, including the Brent improvements (not the version we're using, this one gave $\sim$57 in Kattis.
 A lot simpler though.)\cite{otherpaper} % Vad säger vi med den här meningen???
 
-The factorization program was written in |C| and uses the library GMP\cite{gmp} to represent large numbers, perform functions such as primality testing and GCD.
+The factorization program was written in |C| and uses the library GMP\cite{gmp} to represent large numbers and perform functions such as primality testing and GCD.
 
 Before each iteration of PR, primality testing is performed.
 This is done using GMP's built-in function |mpz_probab_prime| which uses trial division and Miller-Rabin probabilistic primality tests internally.\cite{probabprime}
@@ -282,17 +282,17 @@ We know that it is better than Pollard's rho algorithm, and it seemed to be the 
 \newpage
 \begin{thebibliography}{9}
 
+\bibitem{pollard} \begin{flushleft} Pollard's rho algorithm - \url{http://en.wikipedia.org/wiki/Pollard's_rho_algorithm} <insert date here!> \end{flushleft}
+\bibitem{birthday}Mosteller, Frederick. \emph{''Understanding the birthday problem.''} Selected Papers of Frederick Mosteller. Springer New York, 2006. 349-353.
+\bibitem{colorado} A Quick Tutorial on Pollard's Rho Algorithm - \url{http://www.cs.colorado.edu/~srirams/classes/doku.php/pollard_rho_tutorial}
+\bibitem{brent} Brent, Richard P. \emph{''An improved Monte Carlo factorization algorithm.''} BIT Numerical Mathematics 20.2 (1980)
+\bibitem{fermat} Fermat's factorization method - \url{http://en.wikipedia.org/wiki/Fermat's_factorization_method} <insert date here!>
+\bibitem{qsieve} Quadratic sieve - \url{http://en.wikipedia.org/wiki/Quadratic_sieve} <insert date here!>
+\bibitem{otherpaper} Barnes, Connelly. \emph{''Integer Factorization Algorithms.''} Oregon State University (2004).
 \bibitem{gmp} GMP Homepage - \url{http://gmplib.org} <insert date here!>
 \bibitem{probabprime} \begin{flushleft}GMP Number Theoretic Functions - \url{http://gmplib.org/manual/Number-Theoretic-Functions.html} <insert date here!>\end{flushleft}
-\bibitem{pollard} \begin{flushleft} Pollard's rho algorithm - \url{http://en.wikipedia.org/wiki/Pollard's_rho_algorithm} <insert date here!> \end{flushleft}
-\bibitem{brent} Brent, Richard P. \emph{''An improved Monte Carlo factorization algorithm.''} BIT Numerical Mathematics 20.2 (1980)
-\bibitem{otherpaper} Barnes, Connelly. \emph{''Integer Factorization Algorithms.''} Oregon State University (2004).
-\bibitem{qsieve} Quadratic sieve - \url{http://en.wikipedia.org/wiki/Quadratic_sieve} <insert date here!>
-\bibitem{fermat} Fermat's factorization method - \url{http://en.wikipedia.org/wiki/Fermat's_factorization_method} <insert date here!>
 \bibitem{algnotes} Notes for the course advanced algorithms - \url{http://www.nada.kth.se/~johanh/algnotes.pdf} <insert date here!>
 \bibitem{csh} Pollard's Rho Method - \url{http://www.csh.rit.edu/~pat/math/quickies/rho/}
-\bibitem{colorado} A Quick Tutorial on Pollard's Rho Algorithm - \url{http://www.cs.colorado.edu/~srirams/classes/doku.php/pollard_rho_tutorial}
-\bibitem{birthday}Mosteller, Frederick. \emph{''Understanding the birthday problem.''} Selected Papers of Frederick Mosteller. Springer New York, 2006. 349-353.
 
 \end{thebibliography}
 
