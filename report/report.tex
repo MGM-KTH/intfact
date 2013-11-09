@@ -241,7 +241,12 @@ Different values of $a$ are tried, searching for an $a$ such that the expression
 \end{algorithm}
 
 \subsubsection{Quadratic Sieve}
-The quadratic sieve \cite{qsieve} is the fastest known factorization algorithm for numbers below about 100 decimal digits\cite{qsieve2}.
+The quadratic sieve \cite{qsieve} is the fastest known factorization algorithm for numbers below about 100 decimal digits\cite{qsieve2}. 
+
+% oklart om detta är noggrant nog. tänkte börja enkelt innan vi bestämmer oss för att gå djupt.
+Just as Fermat's factorization method it searches for a congruence of squares modulo $N$. However, instead of the naive approach used by Fermat it uses linear algebra to find squares. The basic idea is to study the parity of each of the multiplicities of the prime factors of a number. For example, the number $144$ is a square since its prime factorization is $2^{4}3^2$ and both exponents $4$ and $2$ are even ($144 = 2^2 3^1\times2^2 3^1$).
+
+% Övriga steg påminner om/är exakt som Fermat's? 
 
 \subsection{Implementation}
 Due to apparent popularity and perceived efficiency of the algorithm, the Pollard's Rho algorithm was chosen for the first implementation.
@@ -317,7 +322,6 @@ Brent's method got the same score as regular Pollard's rho given the same limit 
 
 Given more time, we would have tried to implement the Quadratic Sieve.
 We know that it is better than Pollard's rho algorithm, and it seemed to be the next logical step.
-
 
 
 \newpage
