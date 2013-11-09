@@ -83,7 +83,7 @@
 \textsc{DD2440 - Advanced algorithms } \\ [25pt] % 
 }
 
-\author{\vspace{-20pt} Gustaf Lindstedt - \nolinkurl{glindste@kth.se} - 910301-2135\\\\\\Martin Runelöv - \nolinkurl{mrunelov@kth.se} - 900330-5738}
+\author{Gustaf Lindstedt \\ glindste@kth.se \\ 910301-2135 \and Martin Runelöv \\ mrunelov@kth.se \\ 900330-5738}
 
 \date{\vspace{8pt}\normalsize\today} % Today's date or a custom date
 
@@ -95,7 +95,13 @@
 %	SECTION 1
 %-------------------------------------------------------------------------------
 
+% Abstract?
+
+
 \section{Introduction}
+
+% heh orkade inte ha ett intro direkt med underrubrik.
+This project is done as part of the course \emph{Advanced Algorithms} at the Royal Instityte of Technology, KTH.
 
 \subsection{Problem}
 A prime number is a positive integer greater than 1 that has no positive integer divisors other than 1 and itself.
@@ -115,12 +121,12 @@ The purpose of this project is to study and implement factorization algorithms i
 \section{Method}
 \subsection{Algorithms}
 \subsubsection{Pollard's rho algorithm}
-The first algorithm used was Pollard's rho algorithm\cite{pollard}.
+The first algorithm used was Pollard's rho algorithm \cite{pollard}\cite{algnotes}.
 It is a probabilistic algorithm that tries to find one factor of a composite number.
 The algorithm is then executed multiple times until the number is completely factorized, or until it fails.
 
 The idea behind the algorithm is that we can improve the odds of guessing a factor of a composite number $N$.
-The phenomenon is known as the \emph{birthday problem} or \emph{birthday paradox}\cite{birthday}.
+The phenomenon is known as the \emph{birthday problem} or \emph{birthday paradox} \cite{birthday}.
 % Borde ha nån sorts liknelse som gör det tydligt hur det faktiskt relaterar till birthday om vi ska nämna det
 
 In Pollard's rho algorithm the odds are improved as follows:
@@ -134,15 +140,13 @@ We know that at least one factor is less than or equal to $\sqrt{N}$, so we can 
 % pdfen ovan gör ungefär så, fast sekvens innan birthday. Gillar det.
 If we pick two random numbers $x_i$ and $x_j$ in a sequence $x_1 .. x_k$ and calculate their difference, what are the odds of that difference being a factor of $N$?
 % skrev om meningen under till <= sqrt.
-If we choose values $x_i, x_j \leq \sqrt{N}$, there are $2(\sqrt{N}-d)$ different combinations of $x_i$ and $x_j$ that has the property $\abs{x_i - x_j} = d$.
+If we choose values $x_i, x_j \leq \sqrt{N}$, there are $2(\sqrt{N}-d)$ different combinations of $x_i$ and $x_j$ that has the property $\abs{x_i - x_j} = d$. % Insåg att deras påstående gäller diffen, så abs. Dubbelkollade med wolfram.
 Subsequently, there are $N$ total combinations of $x_i$ and $x_j$.
-The new probability of guessing $d$ is therefore $\frac{2(\sqrt{N}-d)}{N}$. 
+The new probability of guessing $d$ is therefore $\frac{2(\sqrt{N}-d)}{N}$. \cite{colorado}
 % Insert finishing sentence below. The above probability is higher than the one for 1/sqrt when d < sqrt/2.
 % In other words, picking two random numbers is better when d < sqrt/2
 % Om jag tänker rätt så är det svaret för två random, men för en sekvens av k förbättras det, så om vi förklarar
 % sekvensanvändningen ovan borde vi kunna visa att det alltid är bättre i pollard.
-
-.\cite{colorado}
 
 % Nedanstående måste ändras för att matcha ovanstående.
 We use this idea by picking $k$ random numbers and check if the difference of any two of these numbers equal a factor of $N$.
@@ -157,7 +161,7 @@ This is exactly what Pollard's rho algorithm makes use of by using a pseudo-rand
 The pseudo-random sequence generator used by Pollard is $x^2 + 1 \bmod N$. The reasons for using this specific function are that it is easy to implement, and works well in practice \cite{algnotes}. There are, however, alternatives. For example, Brent suggested that we use $x^2 +3$ with his modified Pollard's rho algorithm (see below). This was also proven heuristically. \cite{brent}
 
 In order to reduce memory usage when iterating over the sequence, Floyd's cycle-finding algorithm (also known as the ''tortoise and the hare'' algorithm) is used to only keep two pointers to values in the sequence.
-According to this algorithm, the only two values that we need to keep track of are the ones at index $i$ and $2i$.\cite{floyd}
+According to this algorithm, the only two values that we need to keep track of are the ones at index $i$ and $2i$. \cite{floyd}
 
 Pollard's rho algorithm therefore repeatedly calculates two values $x_i$ and $x_2i$ from the sequence and calculates $gcd(\abs{x_{2i}-x_i})$.
 If the result is greater than 1 (and not $N$ itself), the result is a non-trivial factor of $N$.
@@ -189,10 +193,9 @@ If $d = N$, the algorithm has failed to find a factor.
 \subsubsection{Brent's Factorization Method}
 % Förslag till ändring från nedanstående utkommenterade mening
 Brent's method is built upon Pollard's rho algorithm.
-It improves detection of periodicity in the pseudo-random sequence by replacing Floyd's cycle-finding algorithm with a similar method called Brent's cycle-finding.\cite{brent}
+It improves detection of periodicity in the pseudo-random sequence by replacing Floyd's cycle-finding algorithm with a similar algorithm called Brent's cycle-finding method. \cite{brent}
 
-This improvement mostly center around the fact that multiplying consecutive differences $x_{2i}-x_i$ preserves any divisor $d$ of $N$.
-% Nånting om cykler
+This improvement mostly centers around the fact that multiplying consecutive differences $\abs{x_{2i}-x_i}$ preserves any divisor $d$ of $N$.
 Therefore the computation of a greatest common divisor, which is expensive, can be performed a lot less.
 This can however introduce problems if the product $q$ grows to $q = 0 \bmod N$, since we then get the result $d=N$.
 However, this can be countered by not multiplying too many times, and by backtracking to the last $x_i$ and $x_{2i}$ and performing the regular Pollard's rho procedure if $d=N$.
@@ -236,7 +239,7 @@ Pseudocode for Brent's factorization method: \\
 
 
 \subsubsection{Fermat's Factorization Method}
-Fermat's factorization method\cite{fermat} is based on the ability to represent an odd integer as the difference of two squares $N = a^2 - b^2$.
+Fermat's factorization method \cite{fermat} is based on the ability to represent an odd integer as the difference of two squares $N = a^2 - b^2$.
 Different values of $a$ are tried, searching for an $a$ such that the expression $a^2 - N$, which is equivalent to $b^2$, produces a square.
 
 \begin{algorithm}[H]
@@ -265,18 +268,19 @@ Out of these calculated values a subset will produce products that are squares w
 % Övriga steg påminner om/är exakt som Fermat's? 
 
 \subsection{Implementation}
+The factorization program was written in |C| and uses the library GMP \cite{gmp} to represent large numbers and perform functions such as primality testing and GCD.
+
 Due to apparent popularity and perceived efficiency of the algorithm, the Pollard's Rho algorithm was chosen for the first implementation.
-A static list of the first 10 000 primes was used to weed out trivial primes with trial division, since a composite often contain low primes.
-When using PR only the first 500-2000 primes were used for the trial division.
+A static list of the first 10 000 primes was used to weed out trivial primes with trial division, since a composite number often contains low primes. 
+When using Pollard's rho algorithm only the first 500-2000 primes were used for trial division.
 
-In practice, the $while$-loop runs a fixed number of times since the program has a deadline to keep.
-Another paper that describes several algorithms, including the Brent improvements (not the version we're using, this one gave $\sim$57 in Kattis.
-A lot simpler though.)\cite{otherpaper} % Vad säger vi med den här meningen???
+Before each call to the factorization algorithm, primality testing was perfomed to see if the number to be factored was already prime. This was done using GMP's built-in function |mpz_probab_prime| which uses trial division and Miller-Rabin probabilistic primality tests internally. \cite{probabprime}
 
-The factorization program was written in |C| and uses the library GMP\cite{gmp} to represent large numbers and perform functions such as primality testing and GCD.
 
-Before each iteration of PR, primality testing is performed.
-This is done using GMP's built-in function |mpz_probab_prime| which uses trial division and Miller-Rabin probabilistic primality tests internally.\cite{probabprime}
+After implementing Pollard's rho algorithm we improved it by converting it to Brent's factorization method.
+
+Both algorithms were given a limit on the number of |gcd| calculations to make.
+
 
 %Massa om hur vi implementerade koden
 
@@ -306,10 +310,10 @@ Note that the three factorization algorithms Fermat's, Pollard's and Brent's all
 
 Pollard's rho algorithm got results between 57 and 73, and Brent's factorization method got results between 73 and 86.
 In order to avoid going over the time limit of 15 seconds we had to skip numbers above a certain size.
-Pollard's rho got its best results when we skipped numbers greater than 86 bits.
+Pollard's rho got its best results when we only tried to factorize numbers smaller than 86 bits.
 Since Brent's method is faster, we were able to include numbers up to 95 bits without reaching the time limit.
 
-We also had to set a limit on the number of iterations.
+We also had to set a limit on the number of iterations that the algorithms made.
 This was done using trial-and-error since the number of iterations necessary depends on the numbers to be factored.
 These iteration limits turned out to be slightly arbitrary once above a certain threshold, which seems to indicate that most if not all numbers were successfully factored.
 However, one slight modification was made in Brent's method.
@@ -317,33 +321,35 @@ The number of iterations performed for numbers greater than 90 bits in size were
 This can be explained by the fact that we fail to factorize many of these bigger numbers, 
 and even if we succeed they could require many iterations.
 
-After reaching 86 points we noted that the backtrack loop used by Brent's method, when the first loop results in $d = N,$ never found any factors. With this loop removed we achieved the same result faster.
+After reaching 86 points we noted that the backtrack loop used by Brent's method, when the first loop results in $d = N,$ never found any factors. With this loop removed we achieved the same result slightly faster.
 
-% Removing the backup-iteration when d == N in Brent only improved time. 
-% It never gave any extra factors.
-% + Something about default iterations maxing out at 30k instead of about 100k for most numbers.
-% And maybe mention starting values, "m", "C" etc.
+We also experimented with the |m| and |C| variables (C being the constant in the pseudo-random generator).
+In general, setting |C| to 3 instead of 1, as suggested by Brent, lead to a significant increase in runtime. However, this was probably due to poor interaction with other variables.
+
+% Something about default iterations maxing out at 30k instead of about 100k for most numbers?
+% And maybe mention starting values, "m", "C" etc? C = 1 even for Brent. TLE for 3.
 
 
 \subsection{Discussion}
-Were the results expected? Why?\\
-Given more time, what could have been improved?\\
-Something about PR vs BFM?\\
+%Were the results expected? Why?\\
+%Given more time, what could have been improved?\\
+%Something about PR vs BFM?\\
 
 % Skriv om plz...
 All of the end-results were expected.
 The table in the results section contains no surprises.
 Brent's method got the same score as regular Pollard's rho given the same limit on the size of the numbers, but ran faster and could therefore try more, bigger, numbers, just as expected.
 
-
 Given more time, we would have tried to implement the Quadratic Sieve.
 We know that it is better than Pollard's rho algorithm, and it seemed to be the next logical step.
+However, after reading up how to implement it we came to the conclusion that it would probably be hard to implement in such a short period of time.
 
 
 \newpage
 \begin{thebibliography}{9}
 
 \bibitem{pollard} \begin{flushleft} Pollard's rho algorithm - \url{http://en.wikipedia.org/wiki/Pollard's_rho_algorithm} <insert date here!> \end{flushleft}
+\bibitem{algnotes} Notes for the course advanced algorithms - \url{http://www.nada.kth.se/~johanh/algnotes.pdf} <insert date here!>
 \bibitem{birthday}Mosteller, Frederick. \emph{''Understanding the birthday problem.''} Selected Papers of Frederick Mosteller. Springer New York, p 349-353 (2006).
 \bibitem{colorado} A Quick Tutorial on Pollard's Rho Algorithm - \url{http://www.cs.colorado.edu/~srirams/classes/doku.php/pollard_rho_tutorial}
 \bibitem{floyd} Floyd's cycle-finding algorithm - \url{http://en.wikipedia.org/wiki/Cycle_detection#Tortoise_and_hare}
@@ -354,7 +360,6 @@ We know that it is better than Pollard's rho algorithm, and it seemed to be the 
 \bibitem{otherpaper} Barnes, Connelly. \emph{''Integer Factorization Algorithms.''} Oregon State University (2004).
 \bibitem{gmp} GMP Homepage - \url{http://gmplib.org} <insert date here!>
 \bibitem{probabprime} \begin{flushleft}GMP Number Theoretic Functions - \url{http://gmplib.org/manual/Number-Theoretic-Functions.html} <insert date here!>\end{flushleft}
-\bibitem{algnotes} Notes for the course advanced algorithms - \url{http://www.nada.kth.se/~johanh/algnotes.pdf} <insert date here!>
 \bibitem{csh} Pollard's Rho Method - \url{http://www.csh.rit.edu/~pat/math/quickies/rho/}
 
 \end{thebibliography}
