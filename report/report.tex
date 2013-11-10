@@ -327,7 +327,7 @@ The table below shows you how many of the 100 KATTIS numbers that the different 
     \hline
     \textbf{Algorithm} & \textbf{Factorized numbers} \\ \hline
     Trial division & 11 \\ \hline
-    Trial division + primality test & 19 \\ \hline
+    Trial division + primality testing & 19 \\ \hline
     Fermat's & 29 \\ \hline
     Pollard's rho & 73 \\ \hline
     Brent's & 87* \\ \hline
@@ -339,10 +339,10 @@ The table below shows you how many of the 100 KATTIS numbers that the different 
 
 Note that the three factorization algorithms Fermat's, Pollard's and Brent's all use trial division and primality testing.
 
-Pollard's rho algorithm got results between 57 and 73, and Brent's factorization method got results between 73 and 86.
+Pollard's rho algorithm got results between 57 and 73, and Brent's factorization method got results between 73 and 87.
 In order to avoid going over the time limit of 15 seconds we had to skip numbers above a certain size.
 Pollard's rho got its best results when we only tried to factorize numbers smaller than 86 bits.
-Since Brent's method is faster, we were able to include numbers up to 95 bits without reaching the time limit.
+Since Brent's method is faster, we were able to include all numbers without reaching the time limit. However, since we failed to factorize all numbers bigger than 99 bits these were usually excluded in Brent's.
 
 We also had to set a limit on the number of iterations that the algorithms made.
 This was done using trial-and-error since the number of iterations necessary depends on the numbers to be factored.
