@@ -138,7 +138,7 @@ We know that at least one factor is less than or equal to $\sqrt{N}$, so we can 
 % http://www.mpi-inf.mpg.de/~csaha/lectures/lec18.pdf 
 % Röstar för den här genomgångsordningen: birthday -> sekvens -> floyd's cycle detection trick -> pollard's
 % pdfen ovan gör ungefär så, fast sekvens innan birthday. Gillar det.
-If we pick two random numbers $x_i$ and $x_j$ in a sequence $x_1 .. x_k$ and calculate their difference, what are the odds of that difference being a factor of $N$?
+If we pick two integers $x_i$ and $x_j$ in a random sequence ${x_1 .. x_k} \in [0,N]$ and calculate their difference, what are the odds of that difference being a factor of $N$?
 % skrev om meningen under till <= sqrt.
 If we choose values $x_i, x_j \leq \sqrt{N}$, there are $2(\sqrt{N}-d)$ different combinations of $x_i$ and $x_j$ that has the property $\abs{x_i - x_j} = d$. % Insåg att deras påstående gäller diffen, så abs. Dubbelkollade med wolfram.
 Subsequently, there are $N$ total combinations of $x_i$ and $x_j$.
