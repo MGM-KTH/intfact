@@ -309,7 +309,7 @@ Implementing the Pollard's Rho algorithm went rather smooth.
 After implementing the basic Pollard's rho algorithm and tweaking it a bit we applied Brents improvements for further increases in performance.
 
 When using Pollard's Rho algorithm and the improved Brent version only the first 500-2000 primes were used for trial division.
-Both the regular Pollard's algorithm and the Brent version were limited on the number of |gcd| calculations made.
+Both the regular Pollard's algorithm and the Brent version were dynamically limited on the number of |gcd| calculations made, based on the size of the integer being factored.
 
 
 %Massa om hur vi implementerade koden
