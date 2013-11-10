@@ -308,7 +308,7 @@ After the trial division, we only tried to factor integers of size less than 80 
 Implementing the Pollard's Rho algorithm went rather smooth.
 After implementing the basic Pollard's rho algorithm and tweaking it a bit we applied Brents improvements for further increases in performance.
 
-When using Pollard's Rho algorithm and the improved Brent version only the first 500-2000 primes were used for trial division.
+When using Pollard's Rho algorithm and the improved Brent version only the first 600-1000 primes were used for trial division.
 Both the regular Pollard's algorithm and the Brent version were dynamically limited on the number of |gcd| calculations made, based on the size of the integer being factored.
 
 
@@ -337,13 +337,11 @@ The table below shows you how many of the 100 KATTIS numbers that the different 
     \normalsize
 
 Note that the three factorization algorithms Fermat's, Pollard's and Brent's all use trial division and primality testing.
+For Fermat's algorithm, we used the first 9000 primes.
+For Pollard's and Brent's we used the 1000 and 600 first primes respectively.
 
 Pollard's rho algorithm got results between 57 and 73, and Brent's factorization method got results between 73 and 87.
-In order to avoid going over the time limit of 15 seconds we had to skip numbers above a certain size.
-Pollard's rho got its best results when we only tried to factorize numbers smaller than 86 bits.
-Since Brent's method is faster, we were able to include all numbers without reaching the time limit. However, since we failed to factorize all numbers bigger than 99 bits these were usually excluded in Brent's.
-
-We also had to set a limit on the number of iterations that the algorithms made.
+In order to avoid going over the time limit of 15 seconds we had to set a limit on the number of iterations that the algorithms made.
 This was done using trial-and-error since the number of iterations necessary depends on the numbers to be factored.
 These iteration limits turned out to be slightly arbitrary once above a certain threshold, which seems to indicate that most if not all numbers were successfully factored.
 However, one slight modification was made in Brent's method.
@@ -352,12 +350,15 @@ This was necessary in order to finish on time.
 This can be explained by the fact that we fail to factorize many of these bigger numbers, 
 and even if we succeed they could require many iterations.
 
+We also had to skip numbers above a certain size.
+Basic Pollard's rho got its best results when we only tried to factorize numbers smaller than 86 bits.
+Since Brent's method is faster, we were able to include all numbers without reaching the time limit. However, since we failed to factorize all numbers bigger than 99 bits these were usually excluded in Brent's.
+
 After reaching 86 points we noted that the backtrack loop used by Brent's method, when the first loop results in $d = N,$ never found any factors.
 With this loop removed we achieved the same result slightly faster.
 
 We also experimented with the $m$ and $C$ variables ($C$ being the constant in the pseudo-random generator).
 In general, setting $C$ to 3 instead of 1, as suggested by Brent, lead to a significant increase in runtime.
-However, this was probably due to poor interaction with other variables.
 
 According to Brent, the value of $m$ should often be low, and in general $log(N) << m << N^{1/4}$.
 We tried making $m$ dependent on the number of bits in N, since the number of bits is $log_2(N)$, but we got better results with $m$ set to fixed values between 60 and 100.
@@ -371,19 +372,30 @@ We tried making $m$ dependent on the number of bits in N, since the number of bi
 %Given more time, what could have been improved?\\
 %Something about PR vs BFM?\\
 
-All of the end-results were expected.
 Compared to each other the algorithms performed as expected (see above results table).
-Trial division and primality testing was enough to factorize some factors, which wasn't unexpected since a few numbers in the problem set were intentionally easy.
+Trial division and primality testing was enough to factorize some factors, which wasn't surprising since we expected that a few numbers in the problem set would be intentionally easy.
+
 Fermat's method managed to factorize a few numbers but was too slow to be effective.
+The fact that the optimal configuration for the fermat implementation used the first 9000 primes for trial-division, compared to the 600-1000 used by the Pollard/Brent algorithms, further hinted at the slowness of the algorithm.
+
+Pollard's Rho algorithm gave much better results than Fermat's, most likely due to successfully utilizing the birthday paradox.
+
 Brent's method got the same score as regular Pollard's rho given the same limit on the size of the numbers, but ran faster and could therefore try more, bigger, numbers, just as expected.
+
+We are not sure why setting the value of $C$ to 3 as suggested by Brent gave worse time than setting it to 1 as in the original Pollard's algorithm.
+Perhaps, this was due to poor interaction with other variables, or some arcane difference in hardware.
+
+The fact that some theory was not applicable could have been due to bad luck with the problem set.
+For example, setting a dynamic $m$ never improved our results, but in theory it could have.
+This could also be because we misinterpreted the theory.
 
 Given more time, we would have tried to implement the Quadratic Sieve.
 We know that it is better than Pollard's rho algorithm, and it seemed to be the next logical step.
-However, after reading up on how to implement it we came to the conclusion that it would probably be hard to implement in such a short period of time.
-
-The fact that some theory was not applicable could have been due to bad luck with the problem set. For example, setting a dynamic $m$ never improved our results, but in theory it could have. This could also be because we misinterpreted the theory.
+We saw how it could potentially be really fast by simplifying the factor finding to mere XOR operations.
+However, after reading up on how to implement it we came to the conclusion that it would probably take a lot of time to implement and debug and that the time we had left would not suffice.
 
 Overall, we feel that we managed to implement an effective version of Brent's factorization method and we are satisfied with the results.
+But given more time (or better planning\dots) we would have liked to try to implement the Quadratic Sieve algorithm.
 
 
 \newpage
