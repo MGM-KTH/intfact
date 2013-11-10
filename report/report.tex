@@ -244,6 +244,7 @@ Pseudocode for Brent's factorization method: \\
 
 \subsubsection{Fermat's Factorization Method}
 Fermat's factorization method \cite{fermat} is based on the ability to represent an odd integer as the difference of two squares $N = a^2 - b^2$.
+This also satisfies the weaker condition of a congruence of squares, where $a^2 \equiv b^2 \bmod N$ where $a \not\equiv \pm b \bmod N$, which is used in the Quadratic Sieve method.
 The expression $a^2 - b^2$ is factorable as $(a+b)(a-b)$, which makes $(a+b)$ and $(a-b)$ factors of $N$.
 Different values of $a$ are tried, searching for an $a$ such that the expression $a^2 - N$ yields a perfect square $b^2$.
 The algorithm then returns $a - \sqrt{b^2} = a - b$, which is one of the factors.
