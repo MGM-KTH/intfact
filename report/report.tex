@@ -273,13 +273,23 @@ However it searches for a congruence of squares modulo $N$, which is a weaker co
 A congruence of squares $a^2 \equiv b^2 \bmod N$ is equivalent to $(a+b)(a-b) \equiv 0 \bmod N$.
 This means that $(a+b)$ and $(a-b)$ each contain factors of $N$, which can be found by calculating the GCD of $(a+b)$ and $(a-b)$ of $N$ respectively.
 
+Finding these congruences of squares however, is not trivial.
+To find them the algorithm begins with a data gathering phase, where the expression $a^2 \bmod N$ is calculated for several values of $a$.
+The calculated values are then multiplied with each other, and a subset of these will produce squares.
+These produce a congruence of squares.% EXEMPEL ????
+
 % Det under måste skrivas om för att flyta ihop
-However, instead of the naive approach used by Fermat it uses linear algebra to find squares.
-The basic idea is to study the parity of each of the multiplicities of the prime factors of a number.
+To efficiently find the subset whose products are squares, the algorithm makes use of linear algebra in the form of exponent vectors.
+An exponent vector is a vector in the form $(4, 2)$, where the elements signify the prime exponents for the $i$-th prime.
+In this case the vector represents the number $2^4 3^2 = 144$.
+The basic idea is to study the parity of each of the exponents in the exponent vector.
 For example, the number $144$ is a square since its prime factorization is $2^{4}3^2$ and both exponents $4$ and $2$ are even ($144 = 2^2 3^1\times2^2 3^1$).
 
-The algorithm begins with a data gathering phase, where the expression $a^2 \bmod N$ is calculated for several values of $a$.
-Out of these calculated values a subset will produce products that are squares which yields a congruence of squares.
+Since only the parity of the exponents needs to be considered, the vectors can store the exponents modulo 2.
+Thus we are left with vectors of 1's and 0's, 1 if the exponent is odd and 0 if the exponent is even.
+If we have two different numbers with corresponding vectors, the vector resulting from their multiplication is the same as performing an XOR operation on the two vectors.
+A perfect square is achieved when this vector contains only 0's.
+
 % Övriga steg påminner om/är exakt som Fermat's?
 
 \subsection{Implementation}
