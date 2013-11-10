@@ -297,7 +297,7 @@ At this stage it is important that smooth numbers have been used in order to kee
 % Övriga steg påminner om/är exakt som Fermat's?
 
 \subsection{Implementation}
-Both Fermat's Factorization Method and Pollard's Rho, along with Brents improvements, were implemented.
+Both Fermat's Factorization Method and Pollard's Rho, along with Brent's improvements, were implemented.
 The Quadratic Sieve method was not implemented due to time constraints.
 
 The algorithms were written in |C| and the GMP \cite{gmp} library was used to represent large numbers and perform functions such as primality testing and GCD.
@@ -306,12 +306,12 @@ A static list of the first 10 000 primes was used to weed out trivial primes wit
 Depending on the algorithm and other parameters, we used varying amounts of these primes for trial division.
 
 Before each call to the factorization algorithm, primality testing was perfomed to see if the number to be factored was already prime.
-This was done using GMP's built-in function |mpz_probab_prime| which uses trial division and Miller-Rabin probabilistic primality tests internally. \cite{probabprime}
+This was done using GMP's built-in function |mpz_probab_prime| which uses trial division and Miller-Rabin probabilistic primality tests internally\cite{probabprime}.
 
 To achieve maximum performance, we had to limit the number of cycles and the size of the numbers we tried to factor.
 
 \subsubsection{Fermat's Algorithm}
-We did not encounter any notable issues implementing fermats algorithm, since it is relatively simple.
+We did not encounter any notable issues implementing Fermat's algorithm, since it is relatively simple.
 We found that doing trial division of the 9000 first primes before running Fermat's algorithm yielded the best results.
 After the trial division, we only tried to factor integers of size less than 80 bits, and we limited the amount of iterations to 3 000 000.
 
