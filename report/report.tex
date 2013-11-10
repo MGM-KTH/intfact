@@ -15,7 +15,7 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 %----------------------------------------------------------------------------------------
-%	PACKAGES AND OTHER DOCUMENT CONFIGURATIONS
+% PACKAGES AND OTHER DOCUMENT CONFIGURATIONS
 %----------------------------------------------------------------------------------------
 
 \documentclass[paper=a4, fontsize=11pt,numbers=endperiod]{scrartcl} % A4 paper and 11pt font size
@@ -73,10 +73,10 @@
 
 \posttitle{\par\end{center}} % Remove space between author and title
 %----------------------------------------------------------------------------------------
-%	TITLE SECTION
+% TITLE SECTION
 %----------------------------------------------------------------------------------------
 
-\title{	
+\title{ 
 \huge Project 1 - Factoring \\ % The assignment title
 \vspace{10pt}
 \normalfont \normalsize 
@@ -92,7 +92,7 @@
 \maketitle % Print the title
 
 %-------------------------------------------------------------------------------
-%	SECTION 1
+% SECTION 1
 %-------------------------------------------------------------------------------
 
 % Abstract?
@@ -116,69 +116,52 @@ The purpose of this project is to study and implement factorization algorithms i
 
 
 %-------------------------------------------------------------------------------
-%	SECTION 2
+% SECTION 2
 %-------------------------------------------------------------------------------
 \section{Method}
 \subsection{Algorithms}
 \subsubsection{Pollard's rho algorithm}
-The first algorithm used was Pollard's rho algorithm \cite{pollard}\cite{algnotes}.
-It is a probabilistic algorithm that tries to find one factor of a composite number.
-The algorithm is then executed multiple times until the number is completely factorized, or until it fails.
+Pollard's rho algorithm \cite{pollard}\cite{algnotes} is a probabilistic algorithm that tries to find one factor of a composite number.
+The algorithm is run multiple times until the number is completely factorized, or until it fails.
 
 The idea behind the algorithm is that we can improve the odds of guessing a factor of a composite number $N$.
 The phenomenon is known as the \emph{birthday problem} or \emph{birthday paradox} \cite{birthday}.
-% Borde ha nån sorts liknelse som gör det tydligt hur det faktiskt relaterar till birthday om vi ska nämna det
-
-%In Pollard's rho algorithm the odds are improved as follows:
+The name comes from the following example: The probability of any two people sharing a birthday in a room of 23 people is 50\%, assuming all birthdays are equally probable.
+For 57 people, the probability is 99\%. The probability only reaches 100\% for 367 people, but the often unexpected result is that the probability increases exponentially.
 
 Suppose that we want to guess a factor $d$ of $N$.
 We know that at least one factor is less than or equal to $\sqrt{N}$, so we can safely say that we have a $\frac{1}{\sqrt{N}}$ chance of guessing $d$.
-% Förvirringen ligger i att inte blanda ihop val av två slumpade med koll om den sökta diffen ens finns inom sekvensen.
 % Annan pdf som går igenom sambandet mellan birthday och pollards:
 % http://www.mpi-inf.mpg.de/~csaha/lectures/lec18.pdf 
-% Röstar för den här genomgångsordningen: birthday -> sekvens -> floyd's cycle detection trick -> pollard's
-% pdfen ovan gör ungefär så, fast sekvens innan birthday. Gillar det.
-If we pick two integers $x_i$ and $x_j$ in a random sequence ${x_1 .. x_k} \in [0,N]$ and calculate their difference, what are the odds of that difference being a factor of $N$?
-% skrev om meningen under till <= sqrt.
-If we choose values $x_i, x_j \leq \sqrt{N}$, there are $2(\sqrt{N}-d)$ different combinations of $x_i$ and $x_j$ that has the property $\abs{x_i - x_j} = d$. % Insåg att deras påstående gäller diffen, så abs. Dubbelkollade med wolfram.
-Subsequently, there are $N$ total combinations of $x_i$ and $x_j$.
-The new probability of guessing $d$ is therefore $\frac{2(\sqrt{N}-d)}{N}$. \cite{colorado}
-% Insert finishing sentence below. The above probability is higher than the one for 1/sqrt when d < sqrt/2.
-% In other words, picking two random numbers is better when d < sqrt/2
-% Om jag tänker rätt så är det svaret för två random, men för en sekvens av k förbättras det, så om vi förklarar
-% sekvensanvändningen ovan borde vi kunna visa att det alltid är bättre i pollard.
-
-% Nedanstående måste ändras för att matcha ovanstående.
-We use this idea by picking $k$ random numbers and check if the difference of any two of these numbers equal a factor of $N$.
-The birthday paradox states that the probability of guessing a factor increases rapidly with $k$.
-For example, the probability of any two people sharing a birthday in a room of 23 people is 50\%, assuming all birthdays are equally probable.
-For 57 people, the probability is 99\%.
+If we instead pick two integers $x_i$ and $x_j$ in a random sequence ${x_1 .. x_k} \in [0,N]$ 
+and check if their difference $\abs{x_i - x_j} = d$ we have increased our odds of guessing $d$, 
+according to the observation made in the birthday problem. 
+\cite{birthday2}
+% ^ ett sätt att förenkla på. finns självklart massa varianter. 
 
 This is exactly what Pollard's rho algorithm makes use of by using a pseudo-random generator to generate a sequence.
-
-% Man kan skriva vilken generator som används och flytta övriga delen till diskussion om man vill.
-% Tyckte att det var okej att ta upp här dock. Men, fundera på saken.
-The pseudo-random sequence generator used by Pollard is $x^2 + 1 \bmod N$.
+The pseudo-random sequence generator originally used by Pollard is $x^2 + 1 \bmod N$.
 The reasons for using this specific function are that it is easy to implement, and works well in practice \cite{algnotes}.
 There are, however, alternatives.
-For example, Brent suggested that we use $x^2 +3$ with his modified Pollard's rho algorithm (see below).
+For example, Brent suggested that we use $x^2 +3 \bmod N$ with his modified Pollard's rho algorithm (see section below).
 This was also proven heuristically. \cite{brent}
 
-In order to reduce memory usage when iterating over the sequence, Floyd's cycle-finding algorithm (also known as the ''tortoise and the hare'' algorithm) is used to only keep two pointers to values in the sequence.
+In order to avoid keeping the entire sequence in memory, Floyd's cycle-finding algorithm (also known as the ''tortoise and the hare'' algorithm) is used to only keep two pointers to values in the sequence.
 According to this algorithm, the only two values that we need to keep track of are the ones at index $i$ and $2i$. \cite{floyd}
 
 Pollard's rho algorithm therefore repeatedly calculates two values $x_i$ and $x_2i$ from the sequence and calculates $gcd(\abs{x_{2i}-x_i})$.
+% Här, eller innan, kan man förklara varför gcd funkar. dvs varför vi har hittat d. Finns nåt modulo-bevis.
 If the result is greater than 1 (and not $N$ itself), the result is a non-trivial factor of $N$.
 See the pseudocode for Pollard's rho algorithm below.
 
 Note that the pseudocode does not take into account the case where $d = N$.
-If $d = N$, the algorithm has failed to find a factor.
+If $d = N$, the algorithm has failed to find a factor since this means that the sequence has cycled.
 
 \begin{algorithm}[H]
  \SetAlgoLined % For previous releases [?]
  \textbf{Input:} {A composite number N}\\
  \textbf{Output:} {A non-trivial factor of N}\\
- let $x_0 \in_U \mathbb{Z}_N$\\
+ let $x_0 \in_U \mathbb{Z}_N$\\ 
  $x := x_0$\;
  $y := x_0$\;
  \While{True}{
@@ -341,11 +324,11 @@ The table below shows you how many of the 100 KATTIS numbers that the different 
     Trial division + primality test & 19 \\ \hline
     Fermat's & 29 \\ \hline
     Pollard's rho & 73 \\ \hline
-    Brent's & 86* \\ \hline
+    Brent's & 87* \\ \hline
     \end{tabular}
     \hspace{10pt}
 
-    \footnotesize{*submission ID for the best submission: \href{https://kth.kattis.scrool.se/submission?id=456237}{456237}
+    \footnotesize{*submission ID for the best submission: \href{https://kth.kattis.scrool.se/submission?id=457076}{457076}
     \normalsize
 
 Note that the three factorization algorithms Fermat's, Pollard's and Brent's all use trial division and primality testing.
@@ -371,6 +354,9 @@ We also experimented with the |m| and |C| variables (C being the constant in the
 In general, setting |C| to 3 instead of 1, as suggested by Brent, lead to a significant increase in runtime.
 However, this was probably due to poor interaction with other variables.
 
+According to Brent, the value of |m| should often be low, and in general $log(N) << m << N^{1/4}$.
+We tried making |m| dependent on the number of bits in N, since the number of bits is $log_2(N)$, but we got better results with |m| set to fixed values between 60 and 100.
+
 % Something about default iterations maxing out at 30k instead of about 100k for most numbers?
 % And maybe mention starting values, "m", "C" etc? C = 1 even for Brent. TLE for 3.
 
@@ -382,12 +368,14 @@ However, this was probably due to poor interaction with other variables.
 
 % Skriv om plz...
 All of the end-results were expected.
-The table in the results section contains no surprises.
+Compared to each other the algorithms performed as expected (see results table).
 Brent's method got the same score as regular Pollard's rho given the same limit on the size of the numbers, but ran faster and could therefore try more, bigger, numbers, just as expected.
 
 Given more time, we would have tried to implement the Quadratic Sieve.
 We know that it is better than Pollard's rho algorithm, and it seemed to be the next logical step.
 However, after reading up how to implement it we came to the conclusion that it would probably be hard to implement in such a short period of time.
+
+The fact that some theory was not applicable could have been due to bad luck with the problem set. For example, setting a dynamic |m| never improved our results, but in theory it could have.
 
 
 \newpage
@@ -396,8 +384,9 @@ However, after reading up how to implement it we came to the conclusion that it 
 \bibitem{pollard} \begin{flushleft} Pollard's rho algorithm - \url{http://en.wikipedia.org/wiki/Pollard's_rho_algorithm} <insert date here!> \end{flushleft}
 \bibitem{algnotes} Notes for the course advanced algorithms - \url{http://www.nada.kth.se/~johanh/algnotes.pdf} <insert date here!>
 \bibitem{birthday}Mosteller, Frederick. \emph{''Understanding the birthday problem.''} Selected Papers of Frederick Mosteller. Springer New York, p 349-353 (2006).
+\bibitem{birthday2} Computational Number Theory and Algebra - Lecture - \url{http://www.mpi-inf.mpg.de/~csaha/lectures/lec18.pdf}
 \bibitem{colorado} A Quick Tutorial on Pollard's Rho Algorithm - \url{http://www.cs.colorado.edu/~srirams/classes/doku.php/pollard_rho_tutorial}
-\bibitem{floyd} Floyd's cycle-finding algorithm - \url{http://en.wikipedia.org/wiki/Cycle_detection#Tortoise_and_hare}
+\bibitem{floyd} \begin{flushleft}Floyd's cycle-finding algorithm - \url{http://en.wikipedia.org/wiki/Cycle_detection#Tortoise_and_hare} \end{flushleft}
 \bibitem{brent} Brent, Richard P. \emph{''An improved Monte Carlo factorization algorithm.''} BIT Numerical Mathematics 20.2 (1980).
 \bibitem{fermat} Fermat's factorization method - \url{http://en.wikipedia.org/wiki/Fermat's_factorization_method} <insert date here!>
 \bibitem{qsieve} Quadratic sieve - \url{http://en.wikipedia.org/wiki/Quadratic_sieve} <insert date here!>
