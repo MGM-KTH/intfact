@@ -328,7 +328,7 @@ The table below shows you how many of the 100 KATTIS numbers that the different 
     \end{tabular}
     \hspace{10pt}
 
-    \footnotesize{*submission ID for the best submission: \href{https://kth.kattis.scrool.se/submission?id=457076}{457076}
+    \footnotesize{*submission ID for the best submission: \href{https://kth.kattis.scrool.se/submission?id=458087}{458087}
     \normalsize
 
 Note that the three factorization algorithms Fermat's, Pollard's and Brent's all use trial division and primality testing.
@@ -350,7 +350,7 @@ and even if we succeed they could require many iterations.
 After reaching 86 points we noted that the backtrack loop used by Brent's method, when the first loop results in $d = N,$ never found any factors.
 With this loop removed we achieved the same result slightly faster.
 
-We also experimented with the |m| and |C| variables (C being the constant in the pseudo-random generator).
+We also experimented with the |m| and |C| variables (|C| being the constant in the pseudo-random generator).
 In general, setting |C| to 3 instead of 1, as suggested by Brent, lead to a significant increase in runtime.
 However, this was probably due to poor interaction with other variables.
 
@@ -366,16 +366,19 @@ We tried making |m| dependent on the number of bits in N, since the number of bi
 %Given more time, what could have been improved?\\
 %Something about PR vs BFM?\\
 
-% Skriv om plz...
 All of the end-results were expected.
-Compared to each other the algorithms performed as expected (see results table).
+Compared to each other the algorithms performed as expected (see above results table).
+Trial division and primality testing was enough to factorize some factors, which wasn't unexpected since a few numbers in the problem set were intentionally easy.
+Fermat's method managed to factorize a few numbers but was too slow to be effective.
 Brent's method got the same score as regular Pollard's rho given the same limit on the size of the numbers, but ran faster and could therefore try more, bigger, numbers, just as expected.
 
 Given more time, we would have tried to implement the Quadratic Sieve.
 We know that it is better than Pollard's rho algorithm, and it seemed to be the next logical step.
-However, after reading up how to implement it we came to the conclusion that it would probably be hard to implement in such a short period of time.
+However, after reading up on how to implement it we came to the conclusion that it would probably be hard to implement in such a short period of time.
 
-The fact that some theory was not applicable could have been due to bad luck with the problem set. For example, setting a dynamic |m| never improved our results, but in theory it could have.
+The fact that some theory was not applicable could have been due to bad luck with the problem set. For example, setting a dynamic |m| never improved our results, but in theory it could have. This could also be because we misinterpreted the theory.
+
+Overall, we feel that we managed to implement an effective version of Brent's factorization method and we are satisfied with the results.
 
 
 \newpage
