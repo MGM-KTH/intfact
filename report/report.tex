@@ -144,7 +144,7 @@ The pseudo-random sequence generator originally used by Pollard is $x^2 + 1 \bmo
 The reasons for using this specific function are that it is easy to implement, and works well in practice \cite{algnotes}.
 There are, however, alternatives.
 For example, Brent suggested that we use $x^2 +3 \bmod N$ with his modified Pollard's rho algorithm (see section below).
-This was also proven heuristically. \cite{brent}
+This was empirically motivated based on test results. \cite{brent}
 
 In order to avoid keeping the entire sequence in memory, Floyd's cycle-finding algorithm (also known as the ''tortoise and the hare'' algorithm) is used to only keep two pointers to values in the sequence.
 According to this algorithm, the only two values that we need to keep track of are the ones at index $i$ and $2i$. \cite{floyd}
@@ -184,8 +184,14 @@ It improves detection of periodicity in the pseudo-random sequence by replacing 
 
 This improvement mostly centers around the fact that multiplying consecutive differences $\abs{x_{2i}-x_i}$ preserves any divisor $d$ of $N$.
 Therefore the computation of a greatest common divisor, which is expensive, can be performed a lot less.
-This can however introduce problems if the product $q$ grows to $q = 0 \bmod N$, since we then get the result $d=N$.
-However, this can be countered by not multiplying too many times, and by backtracking to the last $x_i$ and $x_{2i}$ and performing the regular Pollard's rho procedure if $d=N$.
+Brent suggests to multiply $m$ consecutive values where $\log{N} \ll m \ll N^{1/4}$.
+However, large values of $m$ increase the probability of the product $q$ growing to $q = 0 \bmod N$, which is unwanted since we then get the result $d=N$.
+Therefore Brent suggests not using too large $m$ values.
+If the case where $q = 0 \bmod N$ is encountered, the situation can be resolved by backtracking to the last $x_i$ and $x_{2i}$ and performing the regular Pollard's rho procedure if $d=N$.
+Although Pollard's algorithm sometimes also encounter this same problem, it does so much less likely.
+
+A speedup of the algorithm is also suggested, which consists of omitting terms $\abs{x_r - x_k}$ in the product if $ k < \frac{3r}{2}$.
+This is motivated by the fact that any factor contained in these terms are also contained in the terms where $\frac{3r}{2} \le k < 2r$.
 
 Pseudocode for Brent's factorization method: \\
 
