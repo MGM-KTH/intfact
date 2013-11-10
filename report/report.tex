@@ -268,7 +268,12 @@ The algorithm then returns $a - \sqrt{b^2} = a - b$, which is one of the factors
 The quadratic sieve \cite{qsieve} is the fastest known factorization algorithm for numbers below about 100 decimal digits\cite{qsieve2}. 
 
 % oklart om detta är noggrant nog. tänkte börja enkelt innan vi bestämmer oss för att gå djupt.
-Just as Fermat's factorization method it searches for a congruence of squares modulo $N$.
+The quadratic sieve works similarly to Fermat's factorization method.
+However it searches for a congruence of squares modulo $N$, which is a weaker condition than used by Fermat's method.
+A congruence of squares $a^2 \equiv b^2 \bmod N$ is equivalent to $(a+b)(a-b) \equiv 0 \bmod N$.
+This means that $(a+b)$ and $(a-b)$ each contain factors of $N$, which can be found by calculating the GCD of $(a+b)$ and $(a-b)$ of $N$ respectively.
+
+% Det under måste skrivas om för att flyta ihop
 However, instead of the naive approach used by Fermat it uses linear algebra to find squares.
 The basic idea is to study the parity of each of the multiplicities of the prime factors of a number.
 For example, the number $144$ is a square since its prime factorization is $2^{4}3^2$ and both exponents $4$ and $2$ are even ($144 = 2^2 3^1\times2^2 3^1$).
