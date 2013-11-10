@@ -275,12 +275,12 @@ This means that $(a+b)$ and $(a-b)$ each contain factors of $N$, which can be fo
 
 Finding these congruences of squares however, is not trivial.
 To find them the algorithm begins with a data gathering phase, where the expression $a^2 \bmod N$ is calculated for several values of $a$.
+Care is taken to choose so called smooth numbers, i.e. numbers which consists of small primes, which is important for later steps.
 The calculated values are then multiplied with each other, and a subset of these will produce squares.
-These produce a congruence of squares.% EXEMPEL ????
 
 % Det under måste skrivas om för att flyta ihop
 To efficiently find the subset whose products are squares, the algorithm makes use of linear algebra in the form of exponent vectors.
-An exponent vector is a vector in the form $(4, 2)$, where the elements signify the prime exponents for the $i$-th prime.
+An exponent vector is a vector of the form $(4, 2)$, where the elements signify the prime exponents for the $i$-th prime.
 In this case the vector represents the number $2^4 3^2 = 144$.
 The basic idea is to study the parity of each of the exponents in the exponent vector.
 For example, the number $144$ is a square since its prime factorization is $2^{4}3^2$ and both exponents $4$ and $2$ are even ($144 = 2^2 3^1\times2^2 3^1$).
@@ -289,6 +289,10 @@ Since only the parity of the exponents needs to be considered, the vectors can s
 Thus we are left with vectors of 1's and 0's, 1 if the exponent is odd and 0 if the exponent is even.
 If we have two different numbers with corresponding vectors, the vector resulting from their multiplication is the same as performing an XOR operation on the two vectors.
 A perfect square is achieved when this vector contains only 0's.
+
+Thus the problem is now to find a subset of vectors which XOR to the zero vector from a set of exponent vectors modulo 2.
+This can be calculated using Gaussian elimination, and the square is the product of the numbers which the vectors correspond to.
+At this stage it is important that smooth numbers have been used in order to keep the exponent vectors small, thus reducing the size of the matrix.
 
 % Övriga steg påminner om/är exakt som Fermat's?
 
