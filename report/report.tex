@@ -158,7 +158,11 @@ This is exactly what Pollard's rho algorithm makes use of by using a pseudo-rand
 
 % Man kan skriva vilken generator som används och flytta övriga delen till diskussion om man vill.
 % Tyckte att det var okej att ta upp här dock. Men, fundera på saken.
-The pseudo-random sequence generator used by Pollard is $x^2 + 1 \bmod N$. The reasons for using this specific function are that it is easy to implement, and works well in practice \cite{algnotes}. There are, however, alternatives. For example, Brent suggested that we use $x^2 +3$ with his modified Pollard's rho algorithm (see below). This was also proven heuristically. \cite{brent}
+The pseudo-random sequence generator used by Pollard is $x^2 + 1 \bmod N$.
+The reasons for using this specific function are that it is easy to implement, and works well in practice \cite{algnotes}.
+There are, however, alternatives.
+For example, Brent suggested that we use $x^2 +3$ with his modified Pollard's rho algorithm (see below).
+This was also proven heuristically. \cite{brent}
 
 In order to reduce memory usage when iterating over the sequence, Floyd's cycle-finding algorithm (also known as the ''tortoise and the hare'' algorithm) is used to only keep two pointers to values in the sequence.
 According to this algorithm, the only two values that we need to keep track of are the ones at index $i$ and $2i$. \cite{floyd}
@@ -261,20 +265,24 @@ Different values of $a$ are tried, searching for an $a$ such that the expression
 The quadratic sieve \cite{qsieve} is the fastest known factorization algorithm for numbers below about 100 decimal digits\cite{qsieve2}. 
 
 % oklart om detta är noggrant nog. tänkte börja enkelt innan vi bestämmer oss för att gå djupt.
-Just as Fermat's factorization method it searches for a congruence of squares modulo $N$. However, instead of the naive approach used by Fermat it uses linear algebra to find squares. The basic idea is to study the parity of each of the multiplicities of the prime factors of a number. For example, the number $144$ is a square since its prime factorization is $2^{4}3^2$ and both exponents $4$ and $2$ are even ($144 = 2^2 3^1\times2^2 3^1$).
+Just as Fermat's factorization method it searches for a congruence of squares modulo $N$.
+However, instead of the naive approach used by Fermat it uses linear algebra to find squares.
+The basic idea is to study the parity of each of the multiplicities of the prime factors of a number.
+For example, the number $144$ is a square since its prime factorization is $2^{4}3^2$ and both exponents $4$ and $2$ are even ($144 = 2^2 3^1\times2^2 3^1$).
 
 The algorithm begins with a data gathering phase, where the expression $a^2 \bmod N$ is calculated for several values of $a$.
 Out of these calculated values a subset will produce products that are squares which yields a congruence of squares.
-% Övriga steg påminner om/är exakt som Fermat's? 
+% Övriga steg påminner om/är exakt som Fermat's?
 
 \subsection{Implementation}
 The factorization program was written in |C| and uses the library GMP \cite{gmp} to represent large numbers and perform functions such as primality testing and GCD.
 
 Due to apparent popularity and perceived efficiency of the algorithm, the Pollard's Rho algorithm was chosen for the first implementation.
-A static list of the first 10 000 primes was used to weed out trivial primes with trial division, since a composite number often contains low primes. 
+A static list of the first 10 000 primes was used to weed out trivial primes with trial division, since a composite number often contains low primes.
 When using Pollard's rho algorithm only the first 500-2000 primes were used for trial division.
 
-Before each call to the factorization algorithm, primality testing was perfomed to see if the number to be factored was already prime. This was done using GMP's built-in function |mpz_probab_prime| which uses trial division and Miller-Rabin probabilistic primality tests internally. \cite{probabprime}
+Before each call to the factorization algorithm, primality testing was perfomed to see if the number to be factored was already prime.
+This was done using GMP's built-in function |mpz_probab_prime| which uses trial division and Miller-Rabin probabilistic primality tests internally. \cite{probabprime}
 
 
 After implementing Pollard's rho algorithm we improved it by converting it to Brent's factorization method.
@@ -317,14 +325,17 @@ We also had to set a limit on the number of iterations that the algorithms made.
 This was done using trial-and-error since the number of iterations necessary depends on the numbers to be factored.
 These iteration limits turned out to be slightly arbitrary once above a certain threshold, which seems to indicate that most if not all numbers were successfully factored.
 However, one slight modification was made in Brent's method.
-The number of iterations performed for numbers greater than 90 bits in size were set a lot lower than the default limit. This was necessary in order to finish on time. 
+The number of iterations performed for numbers greater than 90 bits in size were set a lot lower than the default limit.
+This was necessary in order to finish on time.
 This can be explained by the fact that we fail to factorize many of these bigger numbers, 
 and even if we succeed they could require many iterations.
 
-After reaching 86 points we noted that the backtrack loop used by Brent's method, when the first loop results in $d = N,$ never found any factors. With this loop removed we achieved the same result slightly faster.
+After reaching 86 points we noted that the backtrack loop used by Brent's method, when the first loop results in $d = N,$ never found any factors.
+With this loop removed we achieved the same result slightly faster.
 
 We also experimented with the |m| and |C| variables (C being the constant in the pseudo-random generator).
-In general, setting |C| to 3 instead of 1, as suggested by Brent, lead to a significant increase in runtime. However, this was probably due to poor interaction with other variables.
+In general, setting |C| to 3 instead of 1, as suggested by Brent, lead to a significant increase in runtime.
+However, this was probably due to poor interaction with other variables.
 
 % Something about default iterations maxing out at 30k instead of about 100k for most numbers?
 % And maybe mention starting values, "m", "C" etc? C = 1 even for Brent. TLE for 3.
