@@ -326,22 +326,22 @@ The table below shows you how many of the 100 KATTIS numbers that the different 
     \hline
     \textbf{Algorithm} & \textbf{Factorized numbers} \\ \hline
     Trial division & 11 \\ \hline
-    Trial division + primality test & 19 \\ \hline
+    Trial division + primality testing & 19 \\ \hline
     Fermat's & 29 \\ \hline
     Pollard's rho & 73 \\ \hline
     Brent's & 87* \\ \hline
     \end{tabular}
     \hspace{10pt}
 
-    \footnotesize{*submission ID for the best submission: \href{https://kth.kattis.scrool.se/submission?id=458087}{458087}
+    \footnotesize{*submission ID for the best submission: \href{https://kth.kattis.scrool.se/submission?id=458281}{458281}
     \normalsize
 
 Note that the three factorization algorithms Fermat's, Pollard's and Brent's all use trial division and primality testing.
 
-Pollard's rho algorithm got results between 57 and 73, and Brent's factorization method got results between 73 and 86.
+Pollard's rho algorithm got results between 57 and 73, and Brent's factorization method got results between 73 and 87.
 In order to avoid going over the time limit of 15 seconds we had to skip numbers above a certain size.
 Pollard's rho got its best results when we only tried to factorize numbers smaller than 86 bits.
-Since Brent's method is faster, we were able to include numbers up to 95 bits without reaching the time limit.
+Since Brent's method is faster, we were able to include all numbers without reaching the time limit. However, since we failed to factorize all numbers bigger than 99 bits these were usually excluded in Brent's.
 
 We also had to set a limit on the number of iterations that the algorithms made.
 This was done using trial-and-error since the number of iterations necessary depends on the numbers to be factored.
@@ -355,12 +355,12 @@ and even if we succeed they could require many iterations.
 After reaching 86 points we noted that the backtrack loop used by Brent's method, when the first loop results in $d = N,$ never found any factors.
 With this loop removed we achieved the same result slightly faster.
 
-We also experimented with the |m| and |C| variables (|C| being the constant in the pseudo-random generator).
-In general, setting |C| to 3 instead of 1, as suggested by Brent, lead to a significant increase in runtime.
+We also experimented with the $m$ and $C$ variables ($C$ being the constant in the pseudo-random generator).
+In general, setting $C$ to 3 instead of 1, as suggested by Brent, lead to a significant increase in runtime.
 However, this was probably due to poor interaction with other variables.
 
-According to Brent, the value of |m| should often be low, and in general $log(N) << m << N^{1/4}$.
-We tried making |m| dependent on the number of bits in N, since the number of bits is $log_2(N)$, but we got better results with |m| set to fixed values between 60 and 100.
+According to Brent, the value of $m$ should often be low, and in general $log(N) << m << N^{1/4}$.
+We tried making $m$ dependent on the number of bits in N, since the number of bits is $log_2(N)$, but we got better results with $m$ set to fixed values between 60 and 100.
 
 % Something about default iterations maxing out at 30k instead of about 100k for most numbers?
 % And maybe mention starting values, "m", "C" etc? C = 1 even for Brent. TLE for 3.
@@ -381,7 +381,7 @@ Given more time, we would have tried to implement the Quadratic Sieve.
 We know that it is better than Pollard's rho algorithm, and it seemed to be the next logical step.
 However, after reading up on how to implement it we came to the conclusion that it would probably be hard to implement in such a short period of time.
 
-The fact that some theory was not applicable could have been due to bad luck with the problem set. For example, setting a dynamic |m| never improved our results, but in theory it could have. This could also be because we misinterpreted the theory.
+The fact that some theory was not applicable could have been due to bad luck with the problem set. For example, setting a dynamic $m$ never improved our results, but in theory it could have. This could also be because we misinterpreted the theory.
 
 Overall, we feel that we managed to implement an effective version of Brent's factorization method and we are satisfied with the results.
 
