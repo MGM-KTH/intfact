@@ -129,7 +129,7 @@ The idea behind the algorithm is that we can improve the odds of guessing a fact
 The phenomenon is known as the \emph{birthday problem} or \emph{birthday paradox} \cite{birthday}.
 % Borde ha nån sorts liknelse som gör det tydligt hur det faktiskt relaterar till birthday om vi ska nämna det
 
-In Pollard's rho algorithm the odds are improved as follows:
+%In Pollard's rho algorithm the odds are improved as follows:
 
 Suppose that we want to guess a factor $d$ of $N$.
 We know that at least one factor is less than or equal to $\sqrt{N}$, so we can safely say that we have a $\frac{1}{\sqrt{N}}$ chance of guessing $d$.
@@ -244,7 +244,9 @@ Pseudocode for Brent's factorization method: \\
 
 \subsubsection{Fermat's Factorization Method}
 Fermat's factorization method \cite{fermat} is based on the ability to represent an odd integer as the difference of two squares $N = a^2 - b^2$.
-Different values of $a$ are tried, searching for an $a$ such that the expression $a^2 - N$, which is equivalent to $b^2$, produces a square.
+The expression $a^2 - b^2$ is factorable as $(a+b)(a-b)$, which makes $(a+b)$ and $(a-b)$ factors of $N$.
+Different values of $a$ are tried, searching for an $a$ such that the expression $a^2 - N$ yields a perfect square $b^2$.
+The algorithm then returns $a - \sqrt{b^2} = a - b$, which is one of the factors.
 
 \begin{algorithm}[H]
  \SetAlgoLined % For previous releases [?]
