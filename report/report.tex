@@ -219,8 +219,8 @@ Pseudocode for Brent's factorization method: \\
    }
    $r := r\times2$\;
  }
- \If(\tcp*[h]{try previous y}){G = N}{
-    \Repeat{G > 1}{
+ \If(\tcp*[h]{try previous y}){d = N}{
+    \Repeat{d > 1}{
       $ys := f(ys)$\;
       $d = gcd(\abs{x-ys},N)$\;
     }
@@ -297,20 +297,19 @@ Depending on the algorithm and other parameters, we used varying amounts of thes
 Before each call to the factorization algorithm, primality testing was perfomed to see if the number to be factored was already prime.
 This was done using GMP's built-in function |mpz_probab_prime| which uses trial division and Miller-Rabin probabilistic primality tests internally\cite{probabprime}.
 
-To achieve maximum performance, we had to limit the number of cycles and the size of the numbers we tried to factor.
+To achieve maximum performance, we had to limit the number of iterations and the size of the numbers we tried to factor.
 
 \subsubsection{Fermat's Algorithm}
 We did not encounter any notable issues implementing Fermat's algorithm, since it is relatively simple.
 We found that doing trial division of the 9000 first primes before running Fermat's algorithm yielded the best results.
-After the trial division, we only tried to factor integers of size less than 80 bits, and we limited the amount of iterations to 3 000 000.
+After the trial division, we only tried to factor integers of size less than 80 bits, and we limited the amount of iterations the main while loop made to 3 000 000.
 
 \subsubsection{Pollard's Rho Algorithm}
-When using Pollard's rho algorithm only the first 500-2000 primes were used for trial division.
+Implementing the Pollard's Rho algorithm went rather smooth.
+After implementing the basic Pollard's rho algorithm and tweaking it a bit we applied Brents improvements for further increases in performance.
 
-
-After implementing Pollard's rho algorithm we improved it by converting it to Brent's factorization method.
-
-Both algorithms were given a limit on the number of |gcd| calculations to make. % Both som i Fermat och Pollard? eller som i vanilla pollard + brent?
+When using Pollard's Rho algorithm and the improved Brent version only the first 500-2000 primes were used for trial division.
+Both the regular Pollard's algorithm and the Brent version were limited on the number of |gcd| calculations made.
 
 
 %Massa om hur vi implementerade koden
