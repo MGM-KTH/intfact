@@ -5,6 +5,8 @@
 #define MAX_LINE_LENGTH 256
 #define FAIL_STRING "fail"
 
+int C = 1;
+
 int main(int argc, char *argv[]) {
     int i;
     static char buffer[MAX_LINE_LENGTH];
@@ -13,43 +15,57 @@ int main(int argc, char *argv[]) {
     for (i = 0; i < FACTORS_ARRAY_SIZE; ++i) {
         mpz_init(factors[i]);
     }
+    // Main loop
     while(( line = fgets(buffer, sizeof(buffer), stdin)) != NULL) {
         mpz_t current_N;
         mpz_init(current_N);
         mpz_set_str(current_N, line, 10);
         factorize(current_N, factors);
     }
-    // TODO: We could clear factors and current_N here, but it's pointless, right?
     return 0;
 }
 
 /*
- * Factorizes N using Pollard's rho method
+ * Factorizes N using Pollard's rho method (Including Brent's improvement)
  */
 void factorize(mpz_t N, mpz_t factors[]) {
+    mpz_t sqrt_N;
+    mpz_init(sqrt_N);
     int num_factors;
     num_factors = find_trivial_factors(N, factors);
 
-    if(mpz_probab_prime_p(N, 5)) {
-        gmp_printf("%Zd\n", N);
-        mpz_set_ui(N, 1);
-    }   
-    else if (mpz_sizeinbase(N,2) < 101) {
-        int result;
-        while (mpz_cmp_si(N, 1) != 0) {
-            if(mpz_probab_prime_p(N, 5)) {
-                gmp_printf("%Zd\n", N);
-                mpz_set_ui(N, 1);
-                break;
+    if (mpz_cmp_si(N, 1)) {
+        // Primality testing
+        if(mpz_probab_prime_p(N, 5)) {
+            gmp_printf("%Zd\n", N);
+            mpz_set_ui(N, 1);
+        }   
+        // Check for perfect squares once
+        else if (mpz_perfect_square_p(N) != 0) {
+            mpz_root(sqrt_N, N, 2);
+            gmp_printf("%Zd\n", sqrt_N);
+            gmp_printf("%Zd\n", sqrt_N);
+            mpz_set_ui(N, 1);
+        }
+        // Bit-limit
+        else if (mpz_sizeinbase(N,2) < 99) {
+            int result;
+            while (mpz_cmp_si(N, 1) != 0) {
+                // Pollard's
+                result = pollards(N, factors, num_factors);
+                if (!result) {
+                    break;
+                }
+                ++num_factors;
+                // Primality testing
+                if(mpz_probab_prime_p(N, 5)) {
+                    gmp_printf("%Zd\n", N);
+                    mpz_set_ui(N, 1);
+                    break;
+                }
             }
-            result = pollards(N, factors, num_factors);
-            if (!result) {
-                break;
-            }
-            ++num_factors;
         }
     }
-
     // If N != 1 (not fully factorized)
     if (mpz_cmp_si(N, 1)) {
         printf("%s\n", FAIL_STRING); // Print this if you can't factorize
@@ -84,44 +100,39 @@ int find_trivial_factors(mpz_t N, mpz_t factors[]) {
     return factor_index;
 }
 
-
 int pollards(mpz_t N, mpz_t factors[], int num_factors) {
-    
-    // Initialize random number container
     mpz_t x;
-    mpz_init_set_ui(x, 2);
-
     mpz_t y;
-    mpz_init_set_ui(y, 2);
-
     mpz_t d;
-    mpz_init(d);
+    mpz_t q;
+    mpz_t temp_var;
+    mpz_t ys;
+    mpz_init_set_ui(x, 2);
+    mpz_init_set_ui(y, 2);
+    mpz_init_set_ui(q, 1);
+    mpz_init(temp_var);
+    mpz_init(ys);
+    mpz_init(d); // G
 
+    long int r = 1;
+    long int m = 100; //((size_in_base_two) < 67) ? 67 : (size_in_base_two); 
+    long int k = 0;
     long int count = 0;
-    // Same limit for all numbers
-    long int limit; // = 130000;
-    // gmp_printf("Number of bits: %lu\n", mpz_sizeinbase(N,2));
+
+    long int limit; // = 130000; // Fixed limit
     int size_in_base_two = mpz_sizeinbase(N,2);
+    // Custom iteration limits
     if (size_in_base_two > 92) {
-        limit = 1000;
+        limit = 950;
     }
     else if (size_in_base_two > 88) {
         limit = 500;
     }
     else {
-        limit = 100000;
+        limit = 90000;
     }
 
-    long int r = 1;
-    long int m = 100; // Set appropriate value? log(N) << m << N^(1/4) ?
-    long int k = 0;
-    mpz_t q;
-    mpz_t temp_var;
-    mpz_t ys;
-    mpz_init_set_ui(q, 1);
-    mpz_init(temp_var);
-    mpz_init(ys);
-
+    // Pollard's
     do {
         mpz_set(x, y);
         long int i = 0;
@@ -130,6 +141,7 @@ int pollards(mpz_t N, mpz_t factors[], int num_factors) {
             ++i;
         }
         k = 0;
+        // Brent's
         do {
             long int j = 0;
             long int range = min(m, r-k);
@@ -150,55 +162,56 @@ int pollards(mpz_t N, mpz_t factors[], int num_factors) {
         r = r*2;
     } while(count < limit && mpz_cmp_si(d, 1) <= 0);
     // This backtracking loop never finds any factors.
-/*    if (mpz_cmp(d, N) == 0) {
-        count = 0;
-        do {
-            next_in_seq(ys, ys,  N);
-            mpz_sub(temp_var, x, ys);
-            mpz_abs(temp_var, temp_var);
-            mpz_gcd(d, temp_var, N);
-            // gmp_printf("temp_var is %Zd,  ", temp_var);
-            // gmp_printf("d is %Zd\n", d);
-            ++count;
-        } while (mpz_cmp_si(d,1) == 0 && count < limit);
-    }*/
-    // Clear variables
+    // if (mpz_cmp(d, N) == 0) {
+    //     count = 0;
+    //     do {
+    //         next_in_seq(ys, ys,  N);
+    //         mpz_sub(temp_var, x, ys);
+    //         mpz_abs(temp_var, temp_var);
+    //         mpz_gcd(d, temp_var, N);
+    //         // gmp_printf("temp_var is %Zd,  ", temp_var);
+    //         // gmp_printf("d is %Zd\n", d);
+    //         ++count;
+    //     } while (mpz_cmp_si(d,1) == 0 && count < limit);
+    // }
     mpz_clear(x);
     mpz_clear(y);
     mpz_clear(q);
+    mpz_clear(ys);
     mpz_clear(temp_var);
-
+    // d == N
     if (mpz_cmp(d, N) == 0) {
-        printf("d==N, fail!\n");
         mpz_clear(d);
         return 0;
     }
+    // d == 1 or d == 0, Invalid factors.
     else if (mpz_cmp_si(d, 1) == 0 || mpz_cmp_si(d, 0) == 0) {
-        // gmp_printf("d is trivial: d=%Zd\n",d);
         mpz_clear(d);
         return 0;
     }
     else {
-        // printf("d is factor!!!!\n");
+        // Add factor to array
         mpz_set(factors[num_factors],d);
-        // mpz_fdiv_q(N, N, d);
+        // Update N
         mpz_divexact(N,N, d);
         mpz_clear(d);
         return 1;
     }
 }
 
+/*
+ * Pseudo-random sequence generator for Pollard's rho algorithm
+ */ 
 void next_in_seq(mpz_t next, mpz_t prev, mpz_t N) {
     mpz_pow_ui(next, prev, 2); // X^2
-    // TLE for +3, (more or less) regardless of #iterations
-    mpz_add_ui(next, next, 1); // X^2 + 1
+    mpz_add_ui(next, next, C); // X^2 + C
     mpz_mod(next, next, N);    // (X^2 + 1) mod N
 }
 
 void print_factors(mpz_t factors[], int num_factors) {
     int i;
     for (i = 0; i < num_factors; ++i) {
-        // This if-check is not needed anymore.
+        // This if-check is redundant
         if (factors[i] == 0) {
             break;
         }
