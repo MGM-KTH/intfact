@@ -112,7 +112,7 @@ int pollards(mpz_t N, mpz_t factors[], int num_factors) {
     mpz_init_set_ui(q, 1);
     mpz_init(temp_var);
     mpz_init(ys);
-    mpz_init(d); // G
+    mpz_init(d);
 
     long int r = 1;
     long int m = 100; //((size_in_base_two) < 67) ? 67 : (size_in_base_two); 
