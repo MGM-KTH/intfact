@@ -19,12 +19,11 @@ int main(int argc, char *argv[]) {
         mpz_set_str(current_N, line, 10);
         factorize(current_N, factors);
     }
-    // TODO: We could clear factors and current_N here, but it's pointless, right?
     return 0;
 }
 
 /*
- * Factorizes N using Pollard's rho method
+ * Factorizes N using Fermat's method
  */
 void factorize(mpz_t N, mpz_t factors[]) {
     int num_factors;
@@ -89,11 +88,12 @@ int fermat(mpz_t N, mpz_t factors[], int num_factors) {
     
     mpz_t a;
     mpz_init(a);
-    // Ugly fix for ceil(sqrt(N)), does trunc_sqrt(N-1) + 1 instead
+    // Ugly fix for a = ceil(sqrt(N)), does a = trunc_sqrt(N-1) + 1 instead
     mpz_sub_ui(a, N, 1);
     mpz_sqrt(a, a);
     mpz_add_ui(a, a, 1);
 
+    // Set b2 to a^2 - N
     mpz_t b2;
     mpz_init(b2);
     mpz_mul(b2, a, a);
@@ -103,44 +103,35 @@ int fermat(mpz_t N, mpz_t factors[], int num_factors) {
     mpz_init_set_ui(count, 0);
     mpz_t limit;
     mpz_init(limit);
-    /*
-    if (mpz_sizeinbase(N,2) > 40) {
-        mpz_set_ui(limit, 100000);
-    } else if (mpz_sizeinbase(N,2) > 20) {
-        mpz_set_ui(limit, 90000);
-    } else {
-        mpz_set_ui(limit, 20000);
-    }
-    */
+    
+    // Set the iteration limit
     mpz_set_ui(limit,3000000);
-    //gmp_printf("N is %Zd, limit is %Zd\n", N, limit);
 
     while(mpz_cmp(count, limit)<0) {
-        //gmp_printf("a is %Zd, b2 is %Zd\n", a, b2);
-        //gmp_printf("N is %Zd\n", N);
 
         if(mpz_perfect_square_p(b2) != 0) {
-            //gmp_printf("b2 found: %Zd\n", b2);
+            // Get the factor from d = a - sqrt(b2)
             mpz_sqrt(b2, b2);
             mpz_sub(b2, a, b2);
             mpz_set(factors[num_factors],b2);
             mpz_fdiv_q(N, N, b2);
 
+            // Clear variables
             mpz_clear(a);
             mpz_clear(b2);
             mpz_clear(count);
             mpz_clear(limit);
             return 1; 
         }
-        // gmp_printf("numbers: xi = %Zd, x2i = %Zd\n", xi, x2i);
-        // gmp_printf("d = %Zd\n", d);
+
+        // a = a + 1
         mpz_add_ui(a, a, 1);
+        // b2 = a^2 - N
         mpz_mul(b2, a, a);
         mpz_sub(b2, b2, N);
+
         mpz_add_ui(count,count,1);
     }
-
-    //gmp_printf("number N: %Zd random number %Zd\n", N, rand);
 
     // Clear variables
     mpz_clear(a);
@@ -148,12 +139,6 @@ int fermat(mpz_t N, mpz_t factors[], int num_factors) {
     mpz_clear(count);
     mpz_clear(limit);
     return 0;
-}
-
-void next_in_seq(mpz_t next, mpz_t prev, mpz_t N) {
-    mpz_pow_ui(next, prev, 2); // X^2
-    mpz_add_ui(next, next, 1); // X^2 + 1
-    mpz_mod(next, next, N);    // (X^2 + 1) mod N
 }
 
 void print_factors(mpz_t factors[], int num_factors) {
