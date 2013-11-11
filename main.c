@@ -13,6 +13,7 @@ int main(int argc, char *argv[]) {
     for (i = 0; i < FACTORS_ARRAY_SIZE; ++i) {
         mpz_init(factors[i]);
     }
+    // Main loop
     while(( line = fgets(buffer, sizeof(buffer), stdin)) != NULL) {
         mpz_t current_N;
         mpz_init(current_N);
@@ -29,6 +30,7 @@ void factorize(mpz_t N, mpz_t factors[]) {
     int num_factors;
     num_factors = find_trivial_factors(N, factors);
 
+    // Primality testing
     if(mpz_probab_prime_p(N, 5)) {
         gmp_printf("%Zd\n", N);
         mpz_set_ui(N, 1);
