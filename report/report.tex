@@ -149,7 +149,7 @@ This was empirically motivated based on test results. \cite{brent}
 In order to avoid keeping the entire sequence in memory, Floyd's cycle-finding algorithm (also known as the ''tortoise and the hare'' algorithm) is used to only keep two pointers to values in the sequence.
 According to this algorithm, the only two values that we need to keep track of are the ones at index $i$ and $2i$. \cite{floyd}
 
-Pollard's rho algorithm therefore repeatedly calculates two values $x_i$ and $x_2i$ from the sequence and calculates $gcd(\abs{x_{2i}-x_i})$.
+Pollard's rho algorithm therefore repeatedly calculates two values $x_i$ and $x_2i$ from the sequence and calculates $gcd(\abs{x_{2i}-x_i}, N)$.
 % Här, eller innan, kan man förklara varför gcd funkar. dvs varför vi har hittat d. Finns nåt modulo-bevis.
 If the result is greater than 1 (and not $N$ itself), the result is a non-trivial factor of $N$.
 See the pseudocode for Pollard's rho algorithm below.
@@ -289,7 +289,7 @@ At this stage it is important that smooth numbers have been used in order to kee
 Both Fermat's Factorization Method and Pollard's Rho, along with Brent's improvements, were implemented.
 The Quadratic Sieve method was not implemented due to time constraints.
 
-The algorithms were written in |C| and the GMP \cite{gmp} library was used to represent large numbers and perform functions such as primality testing and GCD.
+The algorithms were written in |C| and the GMP \cite{gmp} library was used to represent large numbers and perform functions such as primality testing and GCD computation.
 
 A static list of the first 10 000 primes was used to weed out trivial primes with trial division, since a composite number often contains low primes.
 Depending on the algorithm and other parameters, we used varying amounts of these primes for trial division.
@@ -360,8 +360,8 @@ With this loop removed we achieved the same result slightly faster.
 We also experimented with the $m$ and $C$ variables ($C$ being the constant in the pseudo-random generator).
 In general, setting $C$ to 3 instead of 1, as suggested by Brent, lead to a significant increase in runtime.
 
-According to Brent, the value of $m$ should often be low, and in general $log(N) << m << N^{1/4}$.
-We tried making $m$ dependent on the number of bits in N, since the number of bits is $log_2(N)$, but we got better results with $m$ set to fixed values between 60 and 100.
+According to Brent, the value of $m$ should often be low, and in general $\log{N} \ll m \ll N^{1/4}$ as mentioned earlier.
+We tried making $m$ dependent on the number of bits in N, since the number of bits is $\log_2{N}$, but we got better results with $m$ set to fixed values between 60 and 100.
 
 % Something about default iterations maxing out at 30k instead of about 100k for most numbers?
 % And maybe mention starting values, "m", "C" etc? C = 1 even for Brent. TLE for 3.
@@ -403,15 +403,14 @@ Overall, we feel that we managed to implement an effective version of Brent's fa
 \bibitem{colorado} A Quick Tutorial on Pollard's Rho Algorithm - \url{http://www.cs.colorado.edu/~srirams/classes/doku.php/pollard_rho_tutorial}
 \bibitem{birthday}Mosteller, Frederick. \emph{''Understanding the birthday problem.''} Selected Papers of Frederick Mosteller. Springer New York, p 349-353 (2006).
 \bibitem{birthday2} Computational Number Theory and Algebra - Lecture - \url{http://www.mpi-inf.mpg.de/~csaha/lectures/lec18.pdf}
-\bibitem{floyd} \begin{flushleft}Floyd's cycle-finding algorithm - \url{http://en.wikipedia.org/wiki/Cycle_detection#Tortoise_and_hare} \end{flushleft}
 \bibitem{brent} Brent, Richard P. \emph{''An improved Monte Carlo factorization algorithm.''} BIT Numerical Mathematics 20.2 (1980).
+\bibitem{floyd} \begin{flushleft}Floyd's cycle-finding algorithm - \url{http://en.wikipedia.org/wiki/Cycle_detection#Tortoise_and_hare} \end{flushleft}
 \bibitem{fermat} Fermat's factorization method - \url{http://en.wikipedia.org/wiki/Fermat's_factorization_method} <insert date here!>
 \bibitem{qsieve} Quadratic sieve - \url{http://en.wikipedia.org/wiki/Quadratic_sieve} <insert date here!>
 \bibitem{qsieve2} Pomerance, Carl. \emph{''Analysis and comparison of some integer factoring algorithms.''} Mathematisch Centrum Computational Methods in Number Theory, Pt. 1 p 89-139(SEE N 84-17990 08-67) (1982).
-\bibitem{otherpaper} Barnes, Connelly. \emph{''Integer Factorization Algorithms.''} Oregon State University (2004).
 \bibitem{gmp} GMP Homepage - \url{http://gmplib.org} <insert date here!>
 \bibitem{probabprime} \begin{flushleft}GMP Number Theoretic Functions - \url{http://gmplib.org/manual/Number-Theoretic-Functions.html} <insert date here!>\end{flushleft}
-\bibitem{csh} Pollard's Rho Method - \url{http://www.csh.rit.edu/~pat/math/quickies/rho/}
+\bibitem{otherpaper} Barnes, Connelly. \emph{''Integer Factorization Algorithms.''} Oregon State University (2004).
 
 \end{thebibliography}
 
