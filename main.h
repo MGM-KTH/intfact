@@ -12,7 +12,6 @@ int main(int argc, char *argv[]);
 
 void factorize(mpz_t N, mpz_t factors[]);
 void print_factors(mpz_t factors[], int num_factors);
-void next_in_seq(mpz_t next, mpz_t prev, mpz_t N);
 
 int find_trivial_factors(mpz_t N, mpz_t factors[]);
 int fermat(mpz_t N, mpz_t factors[], int num_factors);
