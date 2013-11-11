@@ -359,6 +359,7 @@ With this loop removed we achieved the same result slightly faster.
 
 We also experimented with the $m$ and $C$ variables ($C$ being the constant in the pseudo-random generator).
 In general, setting $C$ to 3 instead of 1, as suggested by Brent, lead to a significant increase in runtime.
+One of the few times $C=3$ did not lead to \emph{Time Limit Exceeded} in Kattis it was 2 seconds slower than for $C = 1$.
 
 According to Brent, the value of $m$ should often be low, and in general $\log{N} \ll m \ll N^{1/4}$ as mentioned earlier.
 We tried making $m$ dependent on the number of bits in N, since the number of bits is $\log_2{N}$, but we got better results with $m$ set to fixed values between 60 and 100.
