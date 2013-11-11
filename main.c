@@ -34,6 +34,7 @@ void factorize(mpz_t N, mpz_t factors[]) {
     int num_factors;
     num_factors = find_trivial_factors(N, factors);
 
+    // If not fully factorized
     if (mpz_cmp_si(N, 1)) {
         // Primality testing
         if(mpz_probab_prime_p(N, 5)) {
