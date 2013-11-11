@@ -27,27 +27,39 @@ int main(int argc, char *argv[]) {
  * Factorizes N using Fermat's method
  */
 void factorize(mpz_t N, mpz_t factors[]) {
+    mpz_t sqrt_N;
+    mpz_init(sqrt_N);
+
     int num_factors;
     num_factors = find_trivial_factors(N, factors);
 
-    // Primality testing
-    if(mpz_probab_prime_p(N, 5)) {
-        gmp_printf("%Zd\n", N);
-        mpz_set_ui(N, 1);
-    }else if(mpz_sizeinbase(N,2) < 80){
+    if(mpz_cmp_si(N,1)) {
+        // Primality testing
+        if(mpz_probab_prime_p(N, 5)) {
+            gmp_printf("%Zd\n", N);
+            mpz_set_ui(N, 1);
 
-        int result;
-        while (mpz_cmp_si(N, 1) != 0) {
-            if(mpz_probab_prime_p(N, 5)) {
-                gmp_printf("%Zd\n", N);
+        }else if(mpz_perfect_square_p(N) != 0) {
+                // Check for perfect squares once
+                mpz_root(sqrt_N, N, 2);
+                gmp_printf("%Zd\n", sqrt_N);
+                gmp_printf("%Zd\n", sqrt_N);
                 mpz_set_ui(N, 1);
-                break;
+        }else if(mpz_sizeinbase(N,2) < 80){
+
+            int result;
+            while (mpz_cmp_si(N, 1) != 0) {
+                if(mpz_probab_prime_p(N, 5)) {
+                    gmp_printf("%Zd\n", N);
+                    mpz_set_ui(N, 1);
+                    break;
+                }
+                result = fermat(N, factors, num_factors);
+                if (!result) {
+                    break;
+                }
+                ++num_factors;
             }
-            result = fermat(N, factors, num_factors);
-            if (!result) {
-                break;
-            }
-            ++num_factors;
         }
     }
 
